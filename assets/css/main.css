@@ -1,0 +1,140 @@
+/* MOBILE's FIRST - Custom properties */
+/* This classes will be then modified for bigger screens */
+
+#hobbiesH4 {
+	text-align: center;
+}
+
+#hobbie1, #hobbie2, #hobbie3 {
+	text-align: center;
+	margin-top: 1em;
+}
+
+.abme-honors-bullet{
+	font-size: 16px;
+}
+
+/* GENERAL CSS */
+#main-content {
+	margin-top: 20px;
+}
+
+li > .active {
+	font-weight: 500;
+}
+
+.trnsf-thin {
+	font-weight: 300;
+}
+
+.trnsf-italic {
+	font-style: italic;
+}
+
+.justify {
+	text-align: justify;
+  	text-justify: inter-word;
+}
+
+/* NICOLAS MESEGUER CONTACT INFO - Related*/
+.profilepicture {
+	max-height: 200px;
+	min-width: 150px;
+	min-height: 150px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* PUBLICATIONS - Related */
+.pub-block {
+	border-left: 2px #D9DDDC solid;
+	padding-left: 15px;
+}
+
+.pub-year-h2 {
+	font-size: 3.2em;
+	font-weight: 100;
+}
+
+.pub-authors {
+	font-weight: 400;
+}
+
+.pub-authors .pub-author {
+	font-weight: 500;
+}
+
+.pub-congress {
+	font-weight: 100;
+}
+
+.pub-force-margin-left {
+	margin-left: 10px !important;
+}
+
+/* BLOG - Related */
+.blog-info {
+	font-weight: 100;
+	width: 100%;
+	clear: both;
+	display: block;
+}
+
+.blog-short {
+	font-weight: 400;
+	font-size: 17px;
+	color: #717378;
+}
+
+.blog-tags > .tag {
+	border-radius: 25px;
+	padding: 8px;
+	font-size: 15px;
+	font-weight: 600;
+	box-shadow: 0px 3px 10px rgba(0,0,0,0.4);
+}
+
+.blog-tags > .t-purple {
+	background-color: rgb(137, 70, 255, 0.8);
+	color: white;
+}
+
+.blog-tags > .t-lime {
+	background-color: rgba(118, 185, 0, 0.8);
+	color: white;
+}
+
+.clickable {
+	border: 2px #D9DDDC solid;
+	padding: 15px;
+	cursor: pointer;
+	transition: .3s;
+	box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+}
+
+.clickable:hover {
+	box-shadow: 0px 20px 40px rgba(0,0,0,0.4);
+	transform: scale(1.03,1.03);
+}
+
+/* MEDIA QUERIES */
+/* BIGGER SCREENS */
+@media (min-width: 768px) {
+	#hobbiesH4 {
+		text-align: left;
+	}
+
+	#hobbie1, #hobbie2, #hobbie3 {
+		text-align: left;
+		margin-top: 0;
+	}
+
+	.profilepicture {
+		margin-left: 0%;
+		margin-right: 0%;
+	}
+	
+	.abme-honors-bullet{
+		margin-left: 40px;
+	}
+}
