@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leaderboard - AAU Data Challenge</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
@@ -15,7 +14,6 @@
   </style>
 </head>
 <body class="bg-[var(--aau-gray)] text-gray-800">
-  <!-- Navigation bar -->
   <header class="bg-[var(--aau-light-blue)] text-white p-4">
     <div class="max-w-5xl mx-auto flex justify-between items-center">
       <div class="flex items-center space-x-3">
@@ -25,26 +23,23 @@
       <nav class="space-x-4">
         <a href="overview.html" class="hover:text-[var(--aau-blue)]">Overview</a>
         <a href="dataset.html" class="hover:text-[var(--aau-blue)]">Dataset</a>
-        <a href="leaderboard.html" class="hover:text-[var(--aau-blue)] font-bold">Leaderboard</a>
+        <a href="leaderboard.html" class="hover:text-[var(--aau-blue)]">Leaderboard</a>
       </nav>
     </div>
   </header>
 
-  <!-- Content -->
   <main class="max-w-5xl mx-auto p-6 space-y-6">
-    <!-- Upload section -->
     <section class="bg-white p-6 rounded shadow">
-      <h2 class="text-xl font-bold text-[var(--aau-blue)] mb-4">Submit Your Prediction</h2>
+      <h2 class="text-2xl font-bold text-[var(--aau-blue)] mb-4">Leaderboard</h2>
+      <!-- Upload form -->
       <form id="uploadForm" class="space-y-4">
         <input type="file" accept=".csv" class="border border-gray-300 rounded p-2 w-full" required>
         <button type="submit" class="bg-[var(--aau-blue)] text-white px-4 py-2 rounded hover:bg-[var(--aau-light-blue)]">Upload</button>
       </form>
-      <p id="uploadMessage" class="mt-4 text-green-600 hidden">File uploaded successfully!</p>
     </section>
 
-    <!-- Leaderboard section -->
+    <!-- Table -->
     <section class="bg-white p-6 rounded shadow">
-      <h2 class="text-xl font-bold text-[var(--aau-blue)] mb-4">Leaderboard</h2>
       <table class="table-auto w-full border-collapse">
         <thead>
           <tr class="bg-[var(--aau-blue)] text-white">
@@ -53,13 +48,13 @@
             <th class="px-4 py-2 text-left">Score</th>
           </tr>
         </thead>
-        <tbody id="leaderboardTable">
-          <tr class="hover:bg-gray-100">
+        <tbody>
+          <tr class="hover:bg-[var(--aau-gray)]">
             <td class="px-4 py-2">1</td>
             <td class="px-4 py-2">Team Alpha</td>
             <td class="px-4 py-2">0.123</td>
           </tr>
-          <tr class="hover:bg-gray-100">
+          <tr class="hover:bg-[var(--aau-gray)]">
             <td class="px-4 py-2">2</td>
             <td class="px-4 py-2">Data Ninjas</td>
             <td class="px-4 py-2">0.145</td>
@@ -68,13 +63,5 @@
       </table>
     </section>
   </main>
-
-  <script>
-    // Simple mock upload handler
-    document.getElementById('uploadForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      document.getElementById('uploadMessage').classList.remove('hidden');
-    });
-  </script>
 </body>
 </html>
