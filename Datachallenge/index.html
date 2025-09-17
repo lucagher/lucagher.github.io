@@ -97,9 +97,24 @@
       pointer-events: none;
     }
     
-    .title-normal {
+    .title-modern {
       font-family: 'Poppins', sans-serif;
-      color: var(--dark-gray);
+    }
+    
+    .title-gradient {
+      background: linear-gradient(135deg, var(--aau-blue) 0%, var(--aau-light-blue) 50%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    
+    .subtitle-modern {
+      color: #64748b;
+      font-weight: 500;
+      font-size: 1.25rem;
+      margin-top: 0.5rem;
     }
     
     .competition-grid {
@@ -155,17 +170,27 @@
 <body class="ml-background min-h-screen">
   <!-- Header Section -->
   <div class="relative z-10">
-    <!-- Top Header with Logo and Title -->
-    <div class="flex flex-col lg:flex-row items-start justify-between max-w-7xl mx-auto px-6 py-8">
-      <!-- Title on the left -->
-      <div class="title-normal mb-8 lg:mb-0">
-        <h1 class="text-4xl lg:text-5xl font-bold mb-2">AAU Data Challenges</h1>
-        <p class="text-xl text-gray-600 font-medium">Machine Learning Competitions</p>
-      </div>
-      
-      <!-- Logo on the right -->
-      <div class="lg:mt-4">
-        <img src="assets/logo2.png" alt="Universität Klagenfurt logo" class="h-16 lg:h-20">
+    <!-- Modern Header -->
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between">
+        <!-- Modern Title Section -->
+        <div class="title-modern text-center lg:text-left mb-8 lg:mb-0 flex-1">
+          <h1 class="title-gradient text-5xl lg:text-7xl mb-4">
+            AAU Data<br>Challenges
+          </h1>
+          <p class="subtitle-modern max-w-md mx-auto lg:mx-0">
+            Compete in cutting-edge machine learning competitions and showcase your data science skills
+          </p>
+          <div class="flex items-center justify-center lg:justify-start mt-6 space-x-4">
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <span class="text-sm text-gray-500 font-medium">Live Competition</span>
+          </div>
+        </div>
+        
+        <!-- Logo -->
+        <div class="flex-shrink-0 lg:ml-8">
+          <img src="assets/logo2.png" alt="Universität Klagenfurt logo" class="h-20 lg:h-24 opacity-90">
+        </div>
       </div>
     </div>
   </div>
@@ -193,11 +218,11 @@
         <div class="grid grid-cols-2 gap-4 mb-8">
           <div class="bg-blue-50 p-4 rounded-lg text-center border border-blue-100">
             <p class="text-sm font-medium text-gray-600 mb-1" style="font-family: 'Poppins', sans-serif;">Deadline</p>
-            <p class="font-bold text-lg text-blue-700" style="font-family: 'Poppins', sans-serif;">30 Apr 2025</p>
+            <p class="font-bold text-lg text-blue-700" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">30 Apr 2025</p>
           </div>
           <div class="bg-blue-50 p-4 rounded-lg text-center border border-blue-100">
             <p class="text-sm font-medium text-gray-600 mb-1" style="font-family: 'Poppins', sans-serif;">Prize</p>
-            <p class="font-bold text-lg text-blue-700" style="font-family: 'Poppins', sans-serif;">€500</p>
+            <p class="font-bold text-lg text-blue-700" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">€500</p>
           </div>
         </div>
         
