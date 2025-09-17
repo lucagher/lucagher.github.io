@@ -75,24 +75,8 @@
       color: var(--aau-blue);
     }
     
-    .ml-background {
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .ml-background::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-      pointer-events: none;
+    .clean-background {
+      background: #ffffff;
     }
     
     .title-modern {
@@ -173,7 +157,7 @@
     }
   </script>
 </head>
-<body class="ml-background min-h-screen">
+<body class="clean-background min-h-screen">
   <!-- Header Section -->
   <div class="relative z-20">
     <!-- Modern Header -->
@@ -187,10 +171,6 @@
           <p class="subtitle-modern max-w-lg mx-auto lg:mx-0 text-lg lg:text-xl">
             Access your competition dashboard
           </p>
-          <div class="flex items-center justify-center lg:justify-start mt-6 space-x-4">
-            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span class="text-sm text-gray-500 font-medium">Secure Login</span>
-          </div>
         </div>
         
         <!-- Logo -->
@@ -201,11 +181,14 @@
     </div>
 
     <!-- Navigation -->
-    <div class="text-center mb-8">
+    <div class="text-center mb-12">
       <nav class="inline-block">
-        <div class="bg-white/80 backdrop-blur p-1 rounded-lg shadow-lg">
-          <a href="index.html" class="btn-nav px-6 py-2 rounded-md">← Back to Home</a>
-        </div>
+        <a href="index.html" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium" style="font-family: 'Poppins', sans-serif;">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Home
+        </a>
       </nav>
     </div>
   </div>
@@ -215,6 +198,8 @@
     <div class="flex justify-center">
       <div class="card p-8 w-full max-w-md">
         <div class="text-center mb-8">
+          <!-- University seal in login form -->
+          <img src="assets/logoKL.png" alt="Universität Klagenfurt seal" class="mx-auto mb-6 h-16">
           <h2 id="competition-title" class="text-2xl font-bold mb-3" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Competition Login</h2>
           <p class="text-gray-600 mb-2" style="font-family: 'Poppins', sans-serif;">Enter access password for:</p>
           <p id="competition-name" class="text-blue-600 font-semibold" style="font-family: 'Poppins', sans-serif;">Renewable Energy Forecasting</p>
