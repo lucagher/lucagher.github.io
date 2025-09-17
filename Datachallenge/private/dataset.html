@@ -6,16 +6,26 @@
   <title>Dataset - AAU Data Challenge</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --aau-blue: #276C8A;
+      --aau-light-blue: #6699CC;
+      --aau-gray: #F5F7FA;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-[var(--aau-gray)] text-gray-800">
   <!-- Navigation bar -->
-  <header class="bg-blue-800 text-white p-4">
-    <div class="max-w-5xl mx-auto flex justify-between">
-      <h1 class="text-xl font-bold">AAU Data Challenge</h1>
+  <header class="bg-[var(--aau-blue)] text-white p-4">
+    <div class="max-w-5xl mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-8">
+        <h1 class="text-xl font-bold">AAU Data Challenge</h1>
+      </div>
       <nav class="space-x-4">
-        <a href="overview.html" class="hover:underline">Overview</a>
-        <a href="dataset.html" class="hover:underline font-bold">Dataset</a>
-        <a href="leaderboard.html" class="hover:underline">Leaderboard</a>
+        <a href="overview.html" class="hover:text-[var(--aau-light-blue)]">Overview</a>
+        <a href="dataset.html" class="hover:text-[var(--aau-light-blue)] font-bold">Dataset</a>
+        <a href="leaderboard.html" class="hover:text-[var(--aau-light-blue)]">Leaderboard</a>
       </nav>
     </div>
   </header>
@@ -23,12 +33,12 @@
   <!-- Content -->
   <main class="max-w-5xl mx-auto p-6">
     <section class="bg-white p-6 rounded shadow">
-      <h2 class="text-2xl font-bold text-blue-800 mb-4">Datasets</h2>
+      <h2 class="text-2xl font-bold text-[var(--aau-blue)] mb-4">Datasets</h2>
       <p class="mb-4">Download the data you need for the competition:</p>
       <ul class="space-y-3">
-        <li><a href="../assets/train.csv" class="text-blue-700 hover:underline">💾 Training Data</a></li>
-        <li><a href="../assets/test.csv" class="text-blue-700 hover:underline">💾 Test Data</a></li>
-        <li><a href="../assets/rules.txt" class="text-blue-700 hover:underline">📄 Challenge Rules (txt)</a></li>
+        <li><a href="../assets/train.csv" class="text-[var(--aau-blue)] hover:underline">📅 Training Data</a></li>
+        <li><a href="../assets/test.csv" class="text-[var(--aau-blue)] hover:underline">📅 Test Data</a></li>
+        <li><a href="../assets/rules.txt" class="text-[var(--aau-blue)] hover:underline">📔 Challenge Rules (txt)</a></li>
       </ul>
     </section>
   </main>
