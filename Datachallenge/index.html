@@ -165,32 +165,25 @@
       <img src="assets/logo2.png" alt="Universität Klagenfurt logo" class="h-16 mx-auto">
     </div>
 
-    <!-- Title and Navigation -->
-    <div class="flex flex-col lg:flex-row items-center justify-between max-w-6xl mx-auto px-6 py-8">
-      <div class="title-rounded mb-8 lg:mb-0">
+    <!-- Title -->
+    <div class="flex justify-center max-w-6xl mx-auto px-6 py-8">
+      <div class="title-rounded">
         <h1 class="text-4xl lg:text-5xl font-bold mb-2">AAU Data Challenges</h1>
         <p class="text-xl opacity-90">Machine Learning Competitions</p>
       </div>
-      
-      <nav class="flex">
-        <div class="bg-white/80 backdrop-blur p-1 rounded-lg shadow-lg">
-          <a href="index.html" class="btn-nav active px-6 py-2 rounded-md">Home</a>
-          <a href="login.html" class="btn-nav px-6 py-2 rounded-md">Login</a>
-        </div>
-      </nav>
     </div>
   </div>
 
   <!-- Main content -->
   <main class="relative z-10 max-w-7xl mx-auto px-6 pb-12">
     <div class="text-center mb-12">
-      <h2 class="title-section text-3xl mb-4">Available Competitions</h2>
-      <p class="text-gray-600 max-w-2xl mx-auto">Join our data science competitions and showcase your machine learning skills</p>
+      <h2 class="title-section text-3xl mb-4">Current Challenge</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">Join our data science competition and showcase your machine learning skills</p>
     </div>
 
-    <div class="competition-grid">
+    <div class="flex justify-center">
       <!-- Active Competition -->
-      <div class="competition-card active" onclick="window.location.href='login.html?competition=renewable'">
+      <div class="competition-card active cursor-pointer" onclick="window.location.href='login.html?competition=renewable'">
         <div class="flex items-center justify-between mb-4">
           <span class="status-badge status-active">Active</span>
           <div class="text-right">
@@ -203,7 +196,7 @@
           Build ML models to forecast renewable energy demand using real-world Austrian datasets.
         </p>
         
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="grid grid-cols-2 gap-4 mb-6">
           <div class="bg-gray-50 p-3 rounded-lg text-center">
             <p class="text-xs font-medium text-gray-500 mb-1">Deadline</p>
             <p class="font-mono text-sm">30 Apr 2025</p>
@@ -214,76 +207,9 @@
           </div>
         </div>
         
-        <div class="flex items-center justify-between">
-          <span class="text-xs text-gray-500">Password: AAU2025</span>
-          <button class="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">
-            Enter →
-          </button>
-        </div>
-      </div>
-
-      <!-- Coming Soon Competition 1 -->
-      <div class="competition-card coming-soon">
-        <div class="flex items-center justify-between mb-4">
-          <span class="status-badge status-coming">Coming Soon</span>
-          <div class="text-right">
-            <div class="text-2xl">🏥</div>
-          </div>
-        </div>
-        
-        <h3 class="title-section text-xl mb-3">Medical Image Analysis</h3>
-        <p class="text-gray-600 text-sm mb-4 leading-relaxed">
-          Develop deep learning models for medical image classification and diagnosis.
-        </p>
-        
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <div class="bg-gray-50 p-3 rounded-lg text-center">
-            <p class="text-xs font-medium text-gray-500 mb-1">Start Date</p>
-            <p class="font-mono text-sm">May 2025</p>
-          </div>
-          <div class="bg-gray-50 p-3 rounded-lg text-center">
-            <p class="text-xs font-medium text-gray-500 mb-1">Prize</p>
-            <p class="font-mono text-sm">€750</p>
-          </div>
-        </div>
-        
-        <div class="flex items-center justify-between">
-          <span class="text-xs text-gray-500">Registration opens soon</span>
-          <button class="text-sm bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-medium" disabled>
-            Soon
-          </button>
-        </div>
-      </div>
-
-      <!-- Coming Soon Competition 2 -->
-      <div class="competition-card coming-soon">
-        <div class="flex items-center justify-between mb-4">
-          <span class="status-badge status-coming">Coming Soon</span>
-          <div class="text-right">
-            <div class="text-2xl">🚗</div>
-          </div>
-        </div>
-        
-        <h3 class="title-section text-xl mb-3">Autonomous Vehicle Challenge</h3>
-        <p class="text-gray-600 text-sm mb-4 leading-relaxed">
-          Create AI systems for autonomous vehicle navigation and decision making.
-        </p>
-        
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <div class="bg-gray-50 p-3 rounded-lg text-center">
-            <p class="text-xs font-medium text-gray-500 mb-1">Start Date</p>
-            <p class="font-mono text-sm">Jun 2025</p>
-          </div>
-          <div class="bg-gray-50 p-3 rounded-lg text-center">
-            <p class="text-xs font-medium text-gray-500 mb-1">Prize</p>
-            <p class="font-mono text-sm">€1000</p>
-          </div>
-        </div>
-        
-        <div class="flex items-center justify-between">
-          <span class="text-xs text-gray-500">Registration opens soon</span>
-          <button class="text-sm bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-medium" disabled>
-            Soon
+        <div class="text-center">
+          <button class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+            Enter Competition →
           </button>
         </div>
       </div>
