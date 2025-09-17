@@ -137,6 +137,15 @@
         padding: 0.5rem 0.25rem;
         font-size: 0.8rem;
       }
+      
+      .table-header th {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+      }
+      
+      #leaderboardTable {
+        min-width: 400px;
+      }
     }
   </style>
 </head>
@@ -193,29 +202,100 @@
     <section class="card p-4 sm:p-6 lg:p-8">
       <h2 class="title-section text-xl sm:text-2xl mb-4 sm:mb-6">Leaderboard</h2>
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[300px]">
+        <table class="w-full min-w-[500px]" id="leaderboardTable">
           <thead>
             <tr class="table-header">
               <th class="px-3 sm:px-6 py-3 sm:py-4 text-left font-medium">Rank</th>
               <th class="px-3 sm:px-6 py-3 sm:py-4 text-left font-medium">Team</th>
               <th class="px-3 sm:px-6 py-3 sm:py-4 text-left font-medium">Score</th>
+              <th class="px-3 sm:px-6 py-3 sm:py-4 text-left font-medium">Entries</th>
+              <th class="px-3 sm:px-6 py-3 sm:py-4 text-left font-medium">Last</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr class="table-row">
-              <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-base sm:text-lg font-semibold text-[var(--aau-blue)]">1</td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium">Team Alpha</td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono">0.123</td>
-            </tr>
-            <tr class="table-row">
-              <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-base sm:text-lg font-semibold text-[var(--aau-blue)]">2</td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium">Data Ninjas</td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono">0.145</td>
-            </tr>
+          <tbody class="divide-y divide-gray-200" id="leaderboardBody">
+            <!-- Data will be populated by JavaScript -->
           </tbody>
         </table>
       </div>
     </section>
   </main>
+
+  <script>
+    // Sample leaderboard data - in a real app, this would come from a server
+    const leaderboardData = [
+      { team: "Team Alpha", score: 0.123, entries: 15, lastSubmission: "2 hours ago" },
+      { team: "Data Ninjas", score: 0.145, entries: 12, lastSubmission: "4 hours ago" },
+      { team: "ML Masters", score: 0.156, entries: 8, lastSubmission: "1 day ago" },
+      { team: "AI Warriors", score: 0.167, entries: 20, lastSubmission: "30 min ago" },
+      { team: "Code Breakers", score: 0.178, entries: 6, lastSubmission: "3 days ago" },
+      { team: "Data Scientists", score: 0.189, entries: 14, lastSubmission: "6 hours ago" },
+      { team: "Algorithm Experts", score: 0.201, entries: 9, lastSubmission: "1 day ago" },
+      { team: "Prediction Pros", score: 0.212, entries: 11, lastSubmission: "2 hours ago" }
+    ];
+
+    // Function to sort data by score (ascending - lower is better)
+    function sortLeaderboard(data) {
+      return data.sort((a, b) => a.score - b.score);
+    }
+
+    // Function to format score
+    function formatScore(score) {
+      return score.toFixed(3);
+    }
+
+    // Function to format last submission time
+    function formatLastSubmission(time) {
+      return time;
+    }
+
+    // Function to render leaderboard
+    function renderLeaderboard() {
+      const sortedData = sortLeaderboard([...leaderboardData]);
+      const tbody = document.getElementById('leaderboardBody');
+      
+      tbody.innerHTML = sortedData.map((entry, index) => `
+        <tr class="table-row">
+          <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-base sm:text-lg font-semibold text-[var(--aau-blue)]">${index + 1}</td>
+          <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium">${entry.team}</td>
+          <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono">${formatScore(entry.score)}</td>
+          <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-sm">${entry.entries}</td>
+          <td class="px-3 sm:px-6 py-3 sm:py-4 text-sm text-gray-600">${formatLastSubmission(entry.lastSubmission)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Function to handle form submission
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      
+      // Simulate adding a new entry
+      const newEntry = {
+        team: "Your Team", // In real app, get from user input
+        score: Math.random() * 0.1 + 0.1, // Simulate random score
+        entries: 1,
+        lastSubmission: "Just now"
+      };
+      
+      leaderboardData.push(newEntry);
+      renderLeaderboard();
+      
+      // Show success message
+      alert('Prediction submitted successfully!');
+    }
+
+    // Initialize leaderboard when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      renderLeaderboard();
+      
+      // Add form submit handler
+      const form = document.getElementById('uploadForm');
+      if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+      }
+    });
+
+    // Auto-refresh leaderboard every 30 seconds (optional)
+    setInterval(renderLeaderboard, 30000);
+  </script>
 </body>
 </html>
