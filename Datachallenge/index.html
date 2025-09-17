@@ -97,15 +97,9 @@
       pointer-events: none;
     }
     
-    .title-rounded {
+    .title-normal {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, var(--aau-blue) 0%, var(--aau-light-blue) 100%);
-      color: white;
-      padding: 1.5rem 2.5rem;
-      border-radius: 1.5rem;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-      transform: rotate(-2deg);
-      display: inline-block;
+      color: var(--dark-gray);
     }
     
     .competition-grid {
@@ -164,9 +158,9 @@
     <!-- Top Header with Logo and Title -->
     <div class="flex flex-col lg:flex-row items-start justify-between max-w-7xl mx-auto px-6 py-8">
       <!-- Title on the left -->
-      <div class="title-rounded mb-8 lg:mb-0">
-        <h1 class="text-3xl lg:text-4xl font-bold mb-1">AAU Data Challenges</h1>
-        <p class="text-lg opacity-90">Machine Learning Competitions</p>
+      <div class="title-normal mb-8 lg:mb-0">
+        <h1 class="text-4xl lg:text-5xl font-bold mb-2">AAU Data Challenges</h1>
+        <p class="text-xl text-gray-600 font-medium">Machine Learning Competitions</p>
       </div>
       
       <!-- Logo on the right -->
@@ -179,38 +173,36 @@
   <!-- Main content -->
   <main class="relative z-10 max-w-7xl mx-auto px-6 pb-12">
     <div class="text-center mb-12">
-      <h2 class="title-section text-3xl mb-4">Current Challenge</h2>
-      <p class="text-gray-600 max-w-2xl mx-auto">Join our data science competition and showcase your machine learning skills</p>
+      <h2 class="text-3xl mb-4 font-bold" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Current Challenge</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto" style="font-family: 'Poppins', sans-serif;">Join our data science competition and showcase your machine learning skills</p>
     </div>
 
     <div class="flex justify-center">
       <!-- Active Competition -->
-      <div class="competition-card active cursor-pointer" onclick="window.location.href='login.html?competition=renewable'">
-        <div class="flex items-center justify-between mb-4">
+      <div class="competition-card active cursor-pointer max-w-lg" onclick="window.location.href='login.html?competition=renewable'">
+        <div class="flex items-center justify-between mb-6">
           <span class="status-badge status-active">Active</span>
-          <div class="text-right">
-            <div class="text-2xl">⚡</div>
-          </div>
+          <div class="text-3xl">⚡</div>
         </div>
         
-        <h3 class="title-section text-xl mb-3">Renewable Energy Forecasting</h3>
-        <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+        <h3 class="text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Renewable Energy Forecasting</h3>
+        <p class="text-gray-600 mb-6 leading-relaxed" style="font-family: 'Poppins', sans-serif;">
           Build ML models to forecast renewable energy demand using real-world Austrian datasets.
         </p>
         
-        <div class="grid grid-cols-2 gap-4 mb-6">
-          <div class="bg-gray-50 p-3 rounded-lg text-center">
-            <p class="text-xs font-medium text-gray-500 mb-1">Deadline</p>
-            <p class="font-mono text-sm">30 Apr 2025</p>
+        <div class="grid grid-cols-2 gap-4 mb-8">
+          <div class="bg-blue-50 p-4 rounded-lg text-center border border-blue-100">
+            <p class="text-sm font-medium text-gray-600 mb-1" style="font-family: 'Poppins', sans-serif;">Deadline</p>
+            <p class="font-bold text-lg text-blue-700" style="font-family: 'Poppins', sans-serif;">30 Apr 2025</p>
           </div>
-          <div class="bg-gray-50 p-3 rounded-lg text-center">
-            <p class="text-xs font-medium text-gray-500 mb-1">Prize</p>
-            <p class="font-mono text-sm">€500</p>
+          <div class="bg-blue-50 p-4 rounded-lg text-center border border-blue-100">
+            <p class="text-sm font-medium text-gray-600 mb-1" style="font-family: 'Poppins', sans-serif;">Prize</p>
+            <p class="font-bold text-lg text-blue-700" style="font-family: 'Poppins', sans-serif;">€500</p>
           </div>
         </div>
         
         <div class="text-center">
-          <button class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+          <button class="bg-[var(--aau-light-blue)] hover:bg-[var(--aau-blue)] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105" style="font-family: 'Poppins', sans-serif;">
             Enter Competition →
           </button>
         </div>
