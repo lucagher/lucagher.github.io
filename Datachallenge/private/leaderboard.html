@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leaderboard - AAU Data Challenge</title>
+  <!-- Google Fonts - Righteous -->
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
@@ -11,26 +13,43 @@
       --aau-light-blue: #6699CC;
       --aau-gray: #F5F7FA;
     }
+    
+    .bounce-title {
+      font-family: 'Righteous', cursive;
+      color: black;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
   </style>
 </head>
 <body class="bg-[var(--aau-gray)] text-gray-800">
-  <header class="bg-[var(--aau-light-blue)] text-white p-4">
-    <div class="max-w-5xl mx-auto flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-8">
-        <h1 class="text-xl font-bold">AAU Data Challenge</h1>
-      </div>
-      <nav class="space-x-4">
-        <a href="overview.html" class="hover:text-[var(--aau-blue)]">Overview</a>
-        <a href="dataset.html" class="hover:text-[var(--aau-blue)]">Dataset</a>
-        <a href="leaderboard.html" class="hover:text-[var(--aau-blue)]">Leaderboard</a>
-      </nav>
-    </div>
-  </header>
+  <!-- Logo and Title -->
+  <div class="text-center py-8">
+    <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-16 mx-auto mb-4">
+    <h1 class="bounce-title text-4xl">AAU Data Challenge</h1>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="text-center mb-8">
+    <a href="overview.html" class="mx-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" style="font-family: 'Righteous', cursive;">Overview</a>
+    <a href="dataset.html" class="mx-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" style="font-family: 'Righteous', cursive;">Dataset</a>
+    <a href="leaderboard.html" class="mx-4 px-4 py-2 bg-[var(--aau-blue)] text-white rounded hover:bg-[var(--aau-light-blue)]" style="font-family: 'Righteous', cursive;">Leaderboard</a>
+  </nav>
 
   <main class="max-w-5xl mx-auto p-6 space-y-6">
     <section class="bg-white p-6 rounded shadow">
-      <h2 class="text-2xl font-bold text-[var(--aau-blue)] mb-4">Leaderboard</h2>
+      <h2 class="text-2xl font-bold text-[var(--aau-blue)] mb-4" style="font-family: 'Righteous', cursive;">Leaderboard</h2>
       <!-- Upload form -->
       <form id="uploadForm" class="space-y-4">
         <input type="file" accept=".csv" class="border border-gray-300 rounded p-2 w-full" required>
