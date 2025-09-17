@@ -6,6 +6,16 @@
   <title>Login - AAU Data Challenge</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      /* primary dark blue */
+      --aau-blue: #276C8A;
+      /* secondary light blue */
+      --aau-light-blue: #6699CC;
+      /* neutral background */
+      --aau-gray: #F5F7FA;
+    }
+  </style>
   <script>
     // Simple password check for demonstration purposes. Note: the password will be visible in the source.
     function checkPassword() {
@@ -19,13 +29,15 @@
     }
   </script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-[var(--aau-gray)] text-gray-800 flex items-center justify-center min-h-screen">
   <div class="bg-white p-8 rounded shadow-md w-80">
-    <h2 class="text-xl font-bold mb-4 text-center text-blue-800">AAU Data Challenge</h2>
+    <!-- University seal centered above the form -->
+    <img src="assets/logoKL.png" alt="Universität Klagenfurt seal" class="mx-auto mb-4 h-16">
+    <h2 class="text-xl font-bold mb-4 text-center text-[var(--aau-blue)]">AAU Data Challenge</h2>
     <input type="password" id="password" placeholder="Enter access password"
-           class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring focus:ring-blue-200">
+           class="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring focus:ring-[var(--aau-light-blue)]">
     <button onclick="checkPassword()"
-            class="w-full bg-blue-800 text-white py-2 rounded hover:bg-blue-600">Enter</button>
+            class="w-full bg-[var(--aau-blue)] text-white py-2 rounded hover:bg-[var(--aau-light-blue)]">Enter</button>
     <p id="error" class="mt-4 text-red-500 text-sm text-center"></p>
   </div>
 </body>
