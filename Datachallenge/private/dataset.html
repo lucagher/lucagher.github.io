@@ -72,19 +72,61 @@
     .download-link:hover {
       transform: translateX(4px);
     }
+    
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+      .title-main {
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+      
+      .card {
+        margin: 0 1rem;
+        padding: 1.25rem;
+      }
+      
+      .btn-nav {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+      
+      .download-link {
+        padding: 0.75rem 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .title-main {
+        font-size: 1.75rem;
+      }
+      
+      .card {
+        margin: 0 0.5rem;
+        padding: 1rem;
+      }
+      
+      .btn-nav {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+      }
+      
+      .download-link {
+        padding: 0.5rem 0.75rem;
+      }
+    }
   </style>
 </head>
 <body class="bg-[var(--aau-gray)] text-gray-800">
   <!-- Logo and Title -->
-  <div class="max-w-7xl mx-auto px-6 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
     <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between">
       <!-- Title Section -->
-      <div class="text-center lg:text-left mb-8 lg:mb-0 flex-1">
-        <h1 class="title-main text-4xl mb-4 font-bold" style="color: var(--aau-blue);">Competition Dashboard</h1>
+      <div class="text-center lg:text-left mb-6 lg:mb-0 flex-1">
+        <h1 class="title-main text-2xl sm:text-3xl lg:text-4xl mb-4 font-bold" style="color: var(--aau-blue); font-family: 'Lato', sans-serif;">Competition Dashboard</h1>
         
         <!-- Back to Home Button -->
-        <div class="mt-6">
-          <a href="../index.html" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium" style="font-family: 'Inter', sans-serif;">
+        <div class="mt-4 sm:mt-6">
+          <a href="../index.html" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
@@ -95,130 +137,132 @@
       
       <!-- Logo -->
       <div class="flex-shrink-0 lg:ml-8">
-        <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-20 lg:h-24 opacity-90">
+        <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-16 sm:h-20 lg:h-24 opacity-90">
       </div>
     </div>
   </div>
 
   <!-- Navigation -->
-  <nav class="flex justify-center mb-12">
-    <div class="bg-gray-100 p-1 rounded-lg">
-      <a href="overview.html" class="btn-nav px-6 py-2 rounded-md">Overview</a>
-      <a href="dataset.html" class="btn-nav active px-6 py-2 rounded-md">Dataset</a>
-      <a href="leaderboard.html" class="btn-nav px-6 py-2 rounded-md">Leaderboard</a>
+  <nav class="flex justify-center mb-8 sm:mb-12 px-4">
+    <div class="bg-gray-100 p-1 rounded-lg w-full max-w-md">
+      <div class="grid grid-cols-3 gap-1">
+        <a href="overview.html" class="btn-nav px-2 sm:px-4 py-2 rounded-md text-center">Overview</a>
+        <a href="dataset.html" class="btn-nav active px-2 sm:px-4 py-2 rounded-md text-center">Dataset</a>
+        <a href="leaderboard.html" class="btn-nav px-2 sm:px-4 py-2 rounded-md text-center">Leaderboard</a>
+      </div>
     </div>
   </nav>
 
   <!-- Content -->
-  <main class="max-w-5xl mx-auto p-6 space-y-6">
-    <section class="card p-8">
-      <h2 class="title-section text-2xl mb-6">Datasets & Resources</h2>
-      <p class="text-gray-600 mb-8">Download the data you need for the competition:</p>
-      <div class="grid gap-4">
-        <a href="../assets/train.csv" class="download-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-blue-50 group">
-          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200">
-            <span class="text-blue-600">📅</span>
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 space-y-4 sm:space-y-6">
+    <section class="card p-4 sm:p-6 lg:p-8">
+      <h2 class="title-section text-xl sm:text-2xl mb-4 sm:mb-6">Datasets & Resources</h2>
+      <p class="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base">Download the data you need for the competition:</p>
+      <div class="grid gap-3 sm:gap-4">
+        <a href="../assets/train.csv" class="download-link flex items-center p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-blue-50 group">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 sm:mr-4 group-hover:bg-blue-200 flex-shrink-0">
+            <span class="text-blue-600 text-sm sm:text-base">📅</span>
           </div>
-          <div>
-            <h3 class="font-medium text-gray-900">Training Data</h3>
-            <p class="text-sm text-gray-500">train.csv</p>
-          </div>
-        </a>
-        <a href="../assets/test.csv" class="download-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-blue-50 group">
-          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200">
-            <span class="text-blue-600">📅</span>
-          </div>
-          <div>
-            <h3 class="font-medium text-gray-900">Test Data</h3>
-            <p class="text-sm text-gray-500">test.csv</p>
+          <div class="min-w-0">
+            <h3 class="font-medium text-gray-900 text-sm sm:text-base">Training Data</h3>
+            <p class="text-xs sm:text-sm text-gray-500">train.csv</p>
           </div>
         </a>
-        <a href="../assets/rules.txt" class="download-link flex items-center p-4 bg-gray-50 rounded-lg hover:bg-blue-50 group">
-          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200">
-            <span class="text-blue-600">📔</span>
+        <a href="../assets/test.csv" class="download-link flex items-center p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-blue-50 group">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 sm:mr-4 group-hover:bg-blue-200 flex-shrink-0">
+            <span class="text-blue-600 text-sm sm:text-base">📅</span>
           </div>
-          <div>
-            <h3 class="font-medium text-gray-900">Challenge Rules</h3>
-            <p class="text-sm text-gray-500">rules.txt</p>
+          <div class="min-w-0">
+            <h3 class="font-medium text-gray-900 text-sm sm:text-base">Test Data</h3>
+            <p class="text-xs sm:text-sm text-gray-500">test.csv</p>
+          </div>
+        </a>
+        <a href="../assets/rules.txt" class="download-link flex items-center p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-blue-50 group">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 sm:mr-4 group-hover:bg-blue-200 flex-shrink-0">
+            <span class="text-blue-600 text-sm sm:text-base">📔</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-medium text-gray-900 text-sm sm:text-base">Challenge Rules</h3>
+            <p class="text-xs sm:text-sm text-gray-500">rules.txt</p>
           </div>
         </a>
       </div>
     </section>
 
-    <section class="card p-8">
-      <h3 class="title-section text-xl mb-6">Data Information</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <section class="card p-4 sm:p-6 lg:p-8">
+      <h3 class="title-section text-lg sm:text-xl mb-4 sm:mb-6">Data Information</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         <div>
-          <h4 class="font-semibold text-gray-900 mb-4">Dataset Details</h4>
+          <h4 class="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Dataset Details</h4>
           <div class="space-y-3">
             <div class="flex items-center justify-between py-2 border-b border-gray-100">
-              <span class="text-gray-600">Training Samples</span>
-              <span class="font-mono text-sm">~10,000 rows</span>
+              <span class="text-gray-600 text-sm sm:text-base">Training Samples</span>
+              <span class="font-mono text-xs sm:text-sm">~10,000 rows</span>
             </div>
             <div class="flex items-center justify-between py-2 border-b border-gray-100">
-              <span class="text-gray-600">Features</span>
-              <span class="font-mono text-sm">15 columns</span>
+              <span class="text-gray-600 text-sm sm:text-base">Features</span>
+              <span class="font-mono text-xs sm:text-sm">15 columns</span>
             </div>
             <div class="flex items-center justify-between py-2 border-b border-gray-100">
-              <span class="text-gray-600">Time Period</span>
-              <span class="font-mono text-sm">2020-2024</span>
+              <span class="text-gray-600 text-sm sm:text-base">Time Period</span>
+              <span class="font-mono text-xs sm:text-sm">2020-2024</span>
             </div>
             <div class="flex items-center justify-between py-2">
-              <span class="text-gray-600">Format</span>
-              <span class="font-mono text-sm">CSV</span>
+              <span class="text-gray-600 text-sm sm:text-base">Format</span>
+              <span class="font-mono text-xs sm:text-sm">CSV</span>
             </div>
           </div>
         </div>
         
         <div>
-          <h4 class="font-semibold text-gray-900 mb-4">Data Features</h4>
+          <h4 class="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Data Features</h4>
           <div class="space-y-2">
             <div class="flex items-center">
-              <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-              <span class="text-sm text-gray-600">Weather data (temperature, humidity)</span>
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+              <span class="text-xs sm:text-sm text-gray-600">Weather data (temperature, humidity)</span>
             </div>
             <div class="flex items-center">
-              <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-              <span class="text-sm text-gray-600">Historical energy consumption</span>
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+              <span class="text-xs sm:text-sm text-gray-600">Historical energy consumption</span>
             </div>
             <div class="flex items-center">
-              <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-              <span class="text-sm text-gray-600">Time-based features</span>
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+              <span class="text-xs sm:text-sm text-gray-600">Time-based features</span>
             </div>
             <div class="flex items-center">
-              <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-              <span class="text-sm text-gray-600">Economic indicators</span>
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+              <span class="text-xs sm:text-sm text-gray-600">Economic indicators</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="card p-8">
-      <h3 class="title-section text-xl mb-6">Getting Started</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <section class="card p-4 sm:p-6 lg:p-8">
+      <h3 class="title-section text-lg sm:text-xl mb-4 sm:mb-6">Getting Started</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div class="text-center">
-          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-blue-600 text-xl">1</span>
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <span class="text-blue-600 text-lg sm:text-xl">1</span>
           </div>
-          <h4 class="font-semibold text-gray-900 mb-2">Download Data</h4>
-          <p class="text-sm text-gray-600">Get training and test datasets</p>
+          <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">Download Data</h4>
+          <p class="text-xs sm:text-sm text-gray-600">Get training and test datasets</p>
         </div>
         
         <div class="text-center">
-          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-green-600 text-xl">2</span>
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <span class="text-green-600 text-lg sm:text-xl">2</span>
           </div>
-          <h4 class="font-semibold text-gray-900 mb-2">Build Model</h4>
-          <p class="text-sm text-gray-600">Create your ML model</p>
+          <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">Build Model</h4>
+          <p class="text-xs sm:text-sm text-gray-600">Create your ML model</p>
         </div>
         
-        <div class="text-center">
-          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-purple-600 text-xl">3</span>
+        <div class="text-center sm:col-span-2 lg:col-span-1">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <span class="text-purple-600 text-lg sm:text-xl">3</span>
           </div>
-          <h4 class="font-semibold text-gray-900 mb-2">Submit Results</h4>
-          <p class="text-sm text-gray-600">Upload predictions to leaderboard</p>
+          <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">Submit Results</h4>
+          <p class="text-xs sm:text-sm text-gray-600">Upload predictions to leaderboard</p>
         </div>
       </div>
     </section>

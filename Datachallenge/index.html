@@ -107,9 +107,44 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       font-weight: 800;
-      line-height: 1.4;
+      line-height: 1.2;
       padding: 0.5rem 0 0.8rem 0;
       margin-bottom: 0.5rem;
+    }
+    
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+      .title-gradient {
+        font-size: 2.5rem;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+      }
+      
+      .subtitle-modern {
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+      
+      .competition-card {
+        margin: 0 1rem;
+        padding: 1.25rem;
+      }
+      
+      .ml-background {
+        padding-bottom: 2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .title-gradient {
+        font-size: 2rem;
+        line-height: 1.1;
+      }
+      
+      .competition-card {
+        margin: 0 0.5rem;
+        padding: 1rem;
+      }
     }
     
     .subtitle-modern {
@@ -198,38 +233,38 @@
   </div>
 
   <!-- Main content -->
-  <main class="relative z-20 max-w-7xl mx-auto px-6 pb-8">
-    <div class="text-center mb-8">
-      <h2 class="text-2xl lg:text-3xl mb-3 font-bold" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Current Challenge</h2>
-      <p class="text-gray-600 max-w-2xl mx-auto text-sm lg:text-base" style="font-family: 'Poppins', sans-serif;">Join our data science competition and showcase your machine learning skills</p>
+  <main class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 pb-8">
+    <div class="text-center mb-6 sm:mb-8">
+      <h2 class="text-xl sm:text-2xl lg:text-3xl mb-3 font-bold" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Current Challenge</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto text-sm lg:text-base px-4" style="font-family: 'Poppins', sans-serif;">Join our data science competition and showcase your machine learning skills</p>
     </div>
 
-    <div class="flex justify-center">
+    <div class="flex justify-center px-2 sm:px-0">
       <!-- Active Competition -->
-      <div class="competition-card active cursor-pointer max-w-md" onclick="window.location.href='login.html?competition=renewable'">
+      <div class="competition-card active cursor-pointer w-full max-w-md" onclick="window.location.href='login.html?competition=renewable'">
         <div class="flex items-center justify-between mb-4">
           <span class="status-badge status-active">Active</span>
           <div class="text-2xl">⚡</div>
         </div>
         
-        <h3 class="text-xl font-bold mb-3" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Renewable Energy Forecasting</h3>
-        <p class="text-gray-600 mb-5 leading-relaxed text-sm" style="font-family: 'Poppins', sans-serif;">
+        <h3 class="text-lg sm:text-xl font-bold mb-3" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Renewable Energy Forecasting</h3>
+        <p class="text-gray-600 mb-5 leading-relaxed text-sm sm:text-base" style="font-family: 'Poppins', sans-serif;">
           Build ML models to forecast renewable energy demand using real-world Austrian datasets.
         </p>
         
-        <div class="grid grid-cols-2 gap-3 mb-6">
-          <div class="bg-blue-50 p-3 rounded-lg text-center border border-blue-100">
+        <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-6">
+          <div class="bg-blue-50 p-2.5 sm:p-3 rounded-lg text-center border border-blue-100">
             <p class="text-xs font-medium text-gray-600 mb-1" style="font-family: 'Poppins', sans-serif;">Deadline</p>
-            <p class="font-bold text-base text-blue-700" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">30 Apr 2025</p>
+            <p class="font-bold text-sm sm:text-base text-blue-700" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">30 Apr 2025</p>
           </div>
-          <div class="bg-blue-50 p-3 rounded-lg text-center border border-blue-100">
+          <div class="bg-blue-50 p-2.5 sm:p-3 rounded-lg text-center border border-blue-100">
             <p class="text-xs font-medium text-gray-600 mb-1" style="font-family: 'Poppins', sans-serif;">Prize</p>
-            <p class="font-bold text-base text-blue-700" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">€500</p>
+            <p class="font-bold text-sm sm:text-base text-blue-700" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">€500</p>
           </div>
         </div>
         
         <div class="text-center">
-          <button class="bg-[var(--aau-light-blue)] hover:bg-[var(--aau-blue)] text-white px-6 py-2.5 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 text-sm" style="font-family: 'Poppins', sans-serif;">
+          <button class="bg-[var(--aau-light-blue)] hover:bg-[var(--aau-blue)] text-white px-4 sm:px-6 py-2.5 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 text-sm w-full sm:w-auto" style="font-family: 'Poppins', sans-serif;">
             Enter Competition →
           </button>
         </div>

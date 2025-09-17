@@ -84,19 +84,73 @@
     .table-row:hover {
       background: #f8fafc;
     }
+    
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+      .title-main {
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+      
+      .card {
+        margin: 0 1rem;
+        padding: 1.25rem;
+      }
+      
+      .btn-nav {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+      
+      .table-header th {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+      }
+      
+      .table-row td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .title-main {
+        font-size: 1.75rem;
+      }
+      
+      .card {
+        margin: 0 0.5rem;
+        padding: 1rem;
+      }
+      
+      .btn-nav {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+      }
+      
+      .table-header th {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+      }
+      
+      .table-row td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+      }
+    }
   </style>
 </head>
 <body class="bg-[var(--aau-gray)] text-gray-800">
   <!-- Logo and Title -->
-  <div class="max-w-7xl mx-auto px-6 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
     <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between">
       <!-- Title Section -->
-      <div class="text-center lg:text-left mb-8 lg:mb-0 flex-1">
-        <h1 class="title-main text-4xl mb-4 font-bold" style="color: var(--aau-blue);">Competition Dashboard</h1>
+      <div class="text-center lg:text-left mb-6 lg:mb-0 flex-1">
+        <h1 class="title-main text-2xl sm:text-3xl lg:text-4xl mb-4 font-bold" style="color: var(--aau-blue); font-family: 'Lato', sans-serif;">Competition Dashboard</h1>
         
         <!-- Back to Home Button -->
-        <div class="mt-6">
-          <a href="../index.html" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium" style="font-family: 'Inter', sans-serif;">
+        <div class="mt-4 sm:mt-6">
+          <a href="../index.html" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
@@ -107,54 +161,56 @@
       
       <!-- Logo -->
       <div class="flex-shrink-0 lg:ml-8">
-        <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-20 lg:h-24 opacity-90">
+        <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-16 sm:h-20 lg:h-24 opacity-90">
       </div>
     </div>
   </div>
 
   <!-- Navigation -->
-  <nav class="flex justify-center mb-12">
-    <div class="bg-gray-100 p-1 rounded-lg">
-      <a href="overview.html" class="btn-nav px-6 py-2 rounded-md">Overview</a>
-      <a href="dataset.html" class="btn-nav px-6 py-2 rounded-md">Dataset</a>
-      <a href="leaderboard.html" class="btn-nav active px-6 py-2 rounded-md">Leaderboard</a>
+  <nav class="flex justify-center mb-8 sm:mb-12 px-4">
+    <div class="bg-gray-100 p-1 rounded-lg w-full max-w-md">
+      <div class="grid grid-cols-3 gap-1">
+        <a href="overview.html" class="btn-nav px-2 sm:px-4 py-2 rounded-md text-center">Overview</a>
+        <a href="dataset.html" class="btn-nav px-2 sm:px-4 py-2 rounded-md text-center">Dataset</a>
+        <a href="leaderboard.html" class="btn-nav active px-2 sm:px-4 py-2 rounded-md text-center">Leaderboard</a>
+      </div>
     </div>
   </nav>
 
-  <main class="max-w-5xl mx-auto p-6 space-y-6">
-    <section class="card p-8">
-      <h2 class="title-section text-2xl mb-6">Submit Predictions</h2>
-      <form id="uploadForm" class="space-y-6">
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 space-y-4 sm:space-y-6">
+    <section class="card p-4 sm:p-6 lg:p-8">
+      <h2 class="title-section text-xl sm:text-2xl mb-4 sm:mb-6">Submit Predictions</h2>
+      <form id="uploadForm" class="space-y-4 sm:space-y-6">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Upload CSV File</label>
-          <input type="file" accept=".csv" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--aau-blue)] focus:border-transparent" required>
+          <input type="file" accept=".csv" class="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 focus:outline-none focus:ring-2 focus:ring-[var(--aau-blue)] focus:border-transparent text-sm" required>
         </div>
-        <button type="submit" class="btn-primary text-white px-6 py-3 rounded-lg">Upload Predictions</button>
+        <button type="submit" class="btn-primary text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg w-full sm:w-auto text-sm sm:text-base">Upload Predictions</button>
       </form>
     </section>
 
     <!-- Table -->
-    <section class="card p-8">
-      <h2 class="title-section text-2xl mb-6">Leaderboard</h2>
-      <div class="overflow-hidden rounded-lg">
-        <table class="w-full">
+    <section class="card p-4 sm:p-6 lg:p-8">
+      <h2 class="title-section text-xl sm:text-2xl mb-4 sm:mb-6">Leaderboard</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[300px]">
           <thead>
             <tr class="table-header">
-              <th class="px-6 py-4 text-left font-medium">Rank</th>
-              <th class="px-6 py-4 text-left font-medium">Team</th>
-              <th class="px-6 py-4 text-left font-medium">Score</th>
+              <th class="px-3 sm:px-6 py-3 sm:py-4 text-left font-medium">Rank</th>
+              <th class="px-3 sm:px-6 py-3 sm:py-4 text-left font-medium">Team</th>
+              <th class="px-3 sm:px-6 py-3 sm:py-4 text-left font-medium">Score</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr class="table-row">
-              <td class="px-6 py-4 font-mono text-lg font-semibold text-[var(--aau-blue)]">1</td>
-              <td class="px-6 py-4 font-medium">Team Alpha</td>
-              <td class="px-6 py-4 font-mono">0.123</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-base sm:text-lg font-semibold text-[var(--aau-blue)]">1</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium">Team Alpha</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono">0.123</td>
             </tr>
             <tr class="table-row">
-              <td class="px-6 py-4 font-mono text-lg font-semibold text-[var(--aau-blue)]">2</td>
-              <td class="px-6 py-4 font-medium">Data Ninjas</td>
-              <td class="px-6 py-4 font-mono">0.145</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-base sm:text-lg font-semibold text-[var(--aau-blue)]">2</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium">Data Ninjas</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono">0.145</td>
             </tr>
           </tbody>
         </table>
