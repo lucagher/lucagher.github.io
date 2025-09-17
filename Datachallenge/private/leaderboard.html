@@ -4,82 +4,143 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leaderboard - AAU Data Challenge</title>
-  <!-- Google Fonts - Righteous -->
-  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
       --aau-blue: #276C8A;
       --aau-light-blue: #6699CC;
       --aau-gray: #F5F7FA;
+      --dark-gray: #1f2937;
+      --light-gray: #f8fafc;
     }
     
-    .bounce-title {
-      font-family: 'Righteous', cursive;
-      color: black;
-      animation: bounce 2s infinite;
+    .title-main {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: var(--dark-gray);
+      letter-spacing: -0.025em;
     }
     
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-      }
-      40% {
-        transform: translateY(-10px);
-      }
-      60% {
-        transform: translateY(-5px);
-      }
+    .title-section {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      color: var(--aau-blue);
+    }
+    
+    .btn-nav {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-nav.active {
+      background: var(--aau-blue);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-nav:not(.active) {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    
+    .btn-nav:not(.active):hover {
+      background: #e2e8f0;
+      color: var(--aau-blue);
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .btn-primary {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      background: linear-gradient(135deg, var(--aau-blue) 0%, var(--aau-light-blue) 100%);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .table-header {
+      background: var(--aau-blue);
+      color: white;
+    }
+    
+    .table-row:hover {
+      background: #f8fafc;
     }
   </style>
 </head>
 <body class="bg-[var(--aau-gray)] text-gray-800">
   <!-- Logo and Title -->
-  <div class="text-center py-8">
-    <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-16 mx-auto mb-4">
-    <h1 class="bounce-title text-4xl">AAU Data Challenge</h1>
+  <div class="text-center py-12">
+    <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-20 mx-auto mb-6">
+    <h1 class="title-main text-5xl mb-2">AAU Data Challenge</h1>
+    <p class="text-gray-600 font-light">Competition Dashboard</p>
   </div>
 
   <!-- Navigation -->
-  <nav class="text-center mb-8">
-    <a href="overview.html" class="mx-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" style="font-family: 'Righteous', cursive;">Overview</a>
-    <a href="dataset.html" class="mx-4 px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" style="font-family: 'Righteous', cursive;">Dataset</a>
-    <a href="leaderboard.html" class="mx-4 px-4 py-2 bg-[var(--aau-blue)] text-white rounded hover:bg-[var(--aau-light-blue)]" style="font-family: 'Righteous', cursive;">Leaderboard</a>
+  <nav class="flex justify-center mb-12">
+    <div class="bg-gray-100 p-1 rounded-lg">
+      <a href="overview.html" class="btn-nav px-6 py-2 rounded-md">Overview</a>
+      <a href="dataset.html" class="btn-nav px-6 py-2 rounded-md">Dataset</a>
+      <a href="leaderboard.html" class="btn-nav active px-6 py-2 rounded-md">Leaderboard</a>
+    </div>
   </nav>
 
   <main class="max-w-5xl mx-auto p-6 space-y-6">
-    <section class="bg-white p-6 rounded shadow">
-      <h2 class="text-2xl font-bold text-[var(--aau-blue)] mb-4" style="font-family: 'Righteous', cursive;">Leaderboard</h2>
-      <!-- Upload form -->
-      <form id="uploadForm" class="space-y-4">
-        <input type="file" accept=".csv" class="border border-gray-300 rounded p-2 w-full" required>
-        <button type="submit" class="bg-[var(--aau-blue)] text-white px-4 py-2 rounded hover:bg-[var(--aau-light-blue)]">Upload</button>
+    <section class="card p-8">
+      <h2 class="title-section text-2xl mb-6">Submit Predictions</h2>
+      <form id="uploadForm" class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Upload CSV File</label>
+          <input type="file" accept=".csv" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--aau-blue)] focus:border-transparent" required>
+        </div>
+        <button type="submit" class="btn-primary text-white px-6 py-3 rounded-lg">Upload Predictions</button>
       </form>
     </section>
 
     <!-- Table -->
-    <section class="bg-white p-6 rounded shadow">
-      <table class="table-auto w-full border-collapse">
-        <thead>
-          <tr class="bg-[var(--aau-blue)] text-white">
-            <th class="px-4 py-2 text-left">Rank</th>
-            <th class="px-4 py-2 text-left">Team</th>
-            <th class="px-4 py-2 text-left">Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="hover:bg-[var(--aau-gray)]">
-            <td class="px-4 py-2">1</td>
-            <td class="px-4 py-2">Team Alpha</td>
-            <td class="px-4 py-2">0.123</td>
-          </tr>
-          <tr class="hover:bg-[var(--aau-gray)]">
-            <td class="px-4 py-2">2</td>
-            <td class="px-4 py-2">Data Ninjas</td>
-            <td class="px-4 py-2">0.145</td>
-          </tr>
-        </tbody>
-      </table>
+    <section class="card p-8">
+      <h2 class="title-section text-2xl mb-6">Leaderboard</h2>
+      <div class="overflow-hidden rounded-lg">
+        <table class="w-full">
+          <thead>
+            <tr class="table-header">
+              <th class="px-6 py-4 text-left font-medium">Rank</th>
+              <th class="px-6 py-4 text-left font-medium">Team</th>
+              <th class="px-6 py-4 text-left font-medium">Score</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr class="table-row">
+              <td class="px-6 py-4 font-mono text-lg font-semibold text-[var(--aau-blue)]">1</td>
+              <td class="px-6 py-4 font-medium">Team Alpha</td>
+              <td class="px-6 py-4 font-mono">0.123</td>
+            </tr>
+            <tr class="table-row">
+              <td class="px-6 py-4 font-mono text-lg font-semibold text-[var(--aau-blue)]">2</td>
+              <td class="px-6 py-4 font-medium">Data Ninjas</td>
+              <td class="px-6 py-4 font-mono">0.145</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </main>
 </body>
