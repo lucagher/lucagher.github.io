@@ -76,15 +76,58 @@
     }
   </style>
   <script>
-    // Simple password check for demonstration purposes. Note: the password will be visible in the source.
+    // Multiple competition password system
+    const competitions = {
+      'renewable': {
+        password: 'AAU2025',
+        redirect: 'private/overview.html',
+        name: 'Renewable Energy Forecasting'
+      },
+      'medical': {
+        password: 'MED2025',
+        redirect: 'private/medical/overview.html',
+        name: 'Medical Image Analysis'
+      },
+      'autonomous': {
+        password: 'AUTO2025',
+        redirect: 'private/autonomous/overview.html',
+        name: 'Autonomous Vehicle Challenge'
+      }
+    };
+
+    // Get competition from URL parameter
+    function getCompetition() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('competition') || 'renewable';
+    }
+
+    // Update page based on competition
+    function updateCompetitionInfo() {
+      const competition = getCompetition();
+      const compData = competitions[competition];
+      
+      if (compData) {
+        document.getElementById('competition-name').textContent = compData.name;
+        document.getElementById('competition-title').textContent = compData.name + ' - Login';
+        document.title = 'Login - ' + compData.name;
+      }
+    }
+
     function checkPassword() {
       const password = document.getElementById('password').value;
-      const correct = "AAU2025"; // Set your access password here
-      if (password === correct) {
-        window.location.href = "private/overview.html";
+      const competition = getCompetition();
+      const compData = competitions[competition];
+      
+      if (compData && password === compData.password) {
+        window.location.href = compData.redirect;
       } else {
         document.getElementById('error').textContent = "Incorrect password, try again.";
       }
+    }
+
+    // Update page when loaded
+    window.onload = function() {
+      updateCompetitionInfo();
     }
   </script>
 </head>
@@ -108,8 +151,9 @@
   <div class="flex items-center justify-center min-h-[50vh]">
     <div class="card p-8 w-96">
       <div class="text-center mb-8">
-        <h2 class="title-main text-2xl mb-2">Welcome Back</h2>
-        <p class="text-gray-600">Enter your access credentials</p>
+        <h2 id="competition-title" class="title-main text-2xl mb-2">Competition Login</h2>
+        <p class="text-gray-600">Enter access password for:</p>
+        <p id="competition-name" class="text-blue-600 font-medium">Renewable Energy Forecasting</p>
       </div>
       
       <div class="space-y-6">
