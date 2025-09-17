@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - AAU Data Challenge</title>
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -74,6 +74,48 @@
       background: #e2e8f0;
       color: var(--aau-blue);
     }
+    
+    .ml-background {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ml-background::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .title-modern {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .title-gradient {
+      background: linear-gradient(135deg, var(--aau-blue) 0%, var(--aau-light-blue) 50%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+      line-height: 1.4;
+      padding: 0.5rem 0 0.8rem 0;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle-modern {
+      color: #64748b;
+      font-weight: 500;
+      font-size: 1.25rem;
+      margin-top: 0.5rem;
+    }
   </style>
   <script>
     // Multiple competition password system
@@ -131,44 +173,70 @@
     }
   </script>
 </head>
-<body class="bg-[var(--aau-gray)] text-gray-800 min-h-screen">
-  <!-- Logo and Title -->
-  <div class="text-center py-12">
-    <img src="assets/logo2.png" alt="Universität Klagenfurt logo" class="h-20 mx-auto mb-6">
-    <h1 class="title-main text-5xl mb-2">AAU Data Challenge</h1>
-    <p class="text-gray-600 font-light">Access Competition Dashboard</p>
-  </div>
-
-  <!-- Navigation -->
-  <nav class="flex justify-center mb-12">
-    <div class="bg-gray-100 p-1 rounded-lg">
-      <a href="index.html" class="btn-nav px-6 py-2 rounded-md">← Back to Home</a>
-    </div>
-  </nav>
-  
-  <!-- Login Form -->
-  <div class="flex items-center justify-center min-h-[50vh]">
-    <div class="card p-8 w-96">
-      <div class="text-center mb-8">
-        <h2 id="competition-title" class="title-main text-2xl mb-2">Competition Login</h2>
-        <p class="text-gray-600">Enter access password for:</p>
-        <p id="competition-name" class="text-blue-600 font-medium">Renewable Energy Forecasting</p>
-      </div>
-      
-      <div class="space-y-6">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Access Password</label>
-          <input type="password" id="password" placeholder="Enter access password"
-                 class="input-field w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--aau-blue)] focus:border-transparent">
+<body class="ml-background min-h-screen">
+  <!-- Header Section -->
+  <div class="relative z-20">
+    <!-- Modern Header -->
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between">
+        <!-- Modern Title Section -->
+        <div class="title-modern text-center lg:text-left mb-8 lg:mb-0 flex-1" style="overflow: visible;">
+          <h1 class="title-gradient text-5xl lg:text-7xl mb-6" style="overflow: visible;">
+            AAU Data<br>Challenges
+          </h1>
+          <p class="subtitle-modern max-w-lg mx-auto lg:mx-0 text-lg lg:text-xl">
+            Access your competition dashboard
+          </p>
+          <div class="flex items-center justify-center lg:justify-start mt-6 space-x-4">
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <span class="text-sm text-gray-500 font-medium">Secure Login</span>
+          </div>
         </div>
         
-        <button onclick="checkPassword()" class="btn-primary text-white py-3 rounded-lg w-full">
-          Access Dashboard
-        </button>
-        
-        <p id="error" class="text-red-500 text-sm text-center"></p>
+        <!-- Logo -->
+        <div class="flex-shrink-0 lg:ml-8">
+          <img src="assets/logo2.png" alt="Universität Klagenfurt logo" class="h-20 lg:h-24 opacity-90">
+        </div>
       </div>
     </div>
+
+    <!-- Navigation -->
+    <div class="text-center mb-8">
+      <nav class="inline-block">
+        <div class="bg-white/80 backdrop-blur p-1 rounded-lg shadow-lg">
+          <a href="index.html" class="btn-nav px-6 py-2 rounded-md">← Back to Home</a>
+        </div>
+      </nav>
+    </div>
   </div>
+  
+  <!-- Login Form -->
+  <main class="relative z-20 max-w-7xl mx-auto px-6 pb-12">
+    <div class="flex justify-center">
+      <div class="card p-8 w-full max-w-md">
+        <div class="text-center mb-8">
+          <h2 id="competition-title" class="text-2xl font-bold mb-3" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Competition Login</h2>
+          <p class="text-gray-600 mb-2" style="font-family: 'Poppins', sans-serif;">Enter access password for:</p>
+          <p id="competition-name" class="text-blue-600 font-semibold" style="font-family: 'Poppins', sans-serif;">Renewable Energy Forecasting</p>
+        </div>
+        
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2" style="font-family: 'Poppins', sans-serif;">Access Password</label>
+            <input type="password" id="password" placeholder="Enter access password"
+                   class="input-field w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--aau-blue)] focus:border-transparent"
+                   style="font-family: 'Poppins', sans-serif;">
+          </div>
+          
+          <button onclick="checkPassword()" class="bg-[var(--aau-light-blue)] hover:bg-[var(--aau-blue)] text-white py-3 rounded-lg w-full font-semibold transition-all duration-300 transform hover:scale-105"
+                  style="font-family: 'Poppins', sans-serif;">
+            Access Dashboard →
+          </button>
+          
+          <p id="error" class="text-red-500 text-sm text-center" style="font-family: 'Poppins', sans-serif;"></p>
+        </div>
+      </div>
+    </div>
+  </main>
 </body>
 </html>
