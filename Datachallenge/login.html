@@ -52,6 +52,28 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(39, 108, 138, 0.15);
     }
+    
+    .btn-nav {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-nav.active {
+      background: var(--aau-blue);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-nav:not(.active) {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    
+    .btn-nav:not(.active):hover {
+      background: #e2e8f0;
+      color: var(--aau-blue);
+    }
   </style>
   <script>
     // Simple password check for demonstration purposes. Note: the password will be visible in the source.
@@ -73,6 +95,14 @@
     <h1 class="title-main text-5xl mb-2">AAU Data Challenge</h1>
     <p class="text-gray-600 font-light">Access Competition Dashboard</p>
   </div>
+
+  <!-- Navigation -->
+  <nav class="flex justify-center mb-12">
+    <div class="bg-gray-100 p-1 rounded-lg">
+      <a href="index.html" class="btn-nav px-6 py-2 rounded-md">Home</a>
+      <a href="login.html" class="btn-nav active px-6 py-2 rounded-md">Login</a>
+    </div>
+  </nav>
   
   <!-- Login Form -->
   <div class="flex items-center justify-center min-h-[50vh]">

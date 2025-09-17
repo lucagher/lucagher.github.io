@@ -54,6 +54,28 @@
       box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
       transform: translateY(-2px);
     }
+    
+    .btn-nav {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-nav.active {
+      background: var(--aau-blue);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-nav:not(.active) {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    
+    .btn-nav:not(.active):hover {
+      background: #e2e8f0;
+      color: var(--aau-blue);
+    }
   </style>
 </head>
 <body class="bg-[var(--aau-gray)] text-gray-800">
@@ -63,6 +85,14 @@
     <h1 class="title-main text-5xl mb-2">AAU Data Challenges</h1>
     <p class="text-gray-600 font-light">Machine Learning Competition</p>
   </div>
+
+  <!-- Navigation -->
+  <nav class="flex justify-center mb-12">
+    <div class="bg-gray-100 p-1 rounded-lg">
+      <a href="index.html" class="btn-nav active px-6 py-2 rounded-md">Home</a>
+      <a href="login.html" class="btn-nav px-6 py-2 rounded-md">Login</a>
+    </div>
+  </nav>
 
   <!-- Main content -->
   <main class="max-w-4xl mx-auto px-6 pb-12">
