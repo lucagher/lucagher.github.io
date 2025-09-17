@@ -80,7 +80,8 @@
     .ml-background {
       background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      min-height: 100vh;
     }
     
     .ml-background::before {
@@ -132,6 +133,17 @@
       
       .ml-background {
         padding-bottom: 2rem;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      
+      body {
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      
+      .max-w-7xl {
+        padding-bottom: 2rem;
       }
     }
     
@@ -144,6 +156,14 @@
       .competition-card {
         margin: 0 0.5rem;
         padding: 1rem;
+      }
+      
+      .ml-background {
+        padding-bottom: 3rem;
+      }
+      
+      .max-w-7xl {
+        padding-bottom: 3rem;
       }
     }
     
@@ -204,7 +224,7 @@
     }
   </style>
 </head>
-<body class="ml-background min-h-screen">
+<body class="ml-background min-h-screen" style="overflow-x: hidden; overflow-y: auto;">
   <!-- Particles Background -->
   <div id="particles-js" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
   
@@ -233,7 +253,7 @@
   </div>
 
   <!-- Main content -->
-  <main class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 pb-8">
+  <main class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 pb-12 sm:pb-8">
     <div class="text-center mb-6 sm:mb-8">
       <h2 class="text-xl sm:text-2xl lg:text-3xl mb-3 font-bold" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Current Challenge</h2>
       <p class="text-gray-600 max-w-2xl mx-auto text-sm lg:text-base px-4" style="font-family: 'Poppins', sans-serif;">Join our data science competition and showcase your machine learning skills</p>
