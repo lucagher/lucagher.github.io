@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AAU Data Challenge</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --aau-blue: #004785;
+      --aau-light-blue: #009FE3;
+      --aau-gray: #F5F7FA;
+    }
+  </style>
+</head>
+<body class="bg-[var(--aau-gray)] text-gray-800">
+  <!-- Header -->
+  <header class="bg-[var(--aau-blue)] text-white shadow">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <!-- Logo removed: we use plain text branding -->
+        <h1 class="text-2xl font-bold">AAU Data Challenges</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="max-w-6xl mx-auto px-6 py-12">
+    <h2 class="text-xl font-semibold mb-6 text-[var(--aau-blue)]">Current Challenge</h2>
+
+    <div class="bg-white rounded-lg shadow hover:shadow-lg transition p-6 border-t-4 border-[var(--aau-light-blue)] max-w-md">
+      <h3 class="text-lg font-bold mb-2 text-[var(--aau-blue)]">Renewable Energy Forecasting</h3>
+      <p class="text-sm text-gray-600 mb-4">
+        Build a machine learning model to forecast renewable energy demand using real-world data.
+      </p>
+      <div class="text-sm text-gray-500 mb-4">
+        <p><strong>Deadline:</strong> 30 April 2025</p>
+        <p><strong>Prize:</strong> €500</p>
+      </div>
+      <a href="login.html"
+         class="block text-center bg-[var(--aau-blue)] text-white rounded px-4 py-2 hover:bg-[var(--aau-light-blue)]">
+        Enter Competition
+      </a>
+    </div>
+  </main>
+</body>
+</html>
