@@ -220,43 +220,6 @@
     </section>
   </main>
 
-  <!-- Team Selection Modal -->
-  <div id="teamSelectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-      <div class="mt-3">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-medium text-gray-900">Select Your Team</h3>
-          <button id="closeModal" class="text-gray-400 hover:text-gray-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-        
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Choose your team:</label>
-          <select id="teamSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--aau-blue)] focus:border-transparent">
-            <option value="">Select a team...</option>
-          </select>
-        </div>
-        
-        <div id="newTeamInput" class="mb-4 hidden">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Enter new team name:</label>
-          <input type="text" id="newTeamName" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--aau-blue)] focus:border-transparent" placeholder="Team name...">
-        </div>
-        
-        <div class="flex justify-end space-x-3">
-          <button id="cancelTeam" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
-            Cancel
-          </button>
-          <button id="confirmTeam" class="px-4 py-2 bg-[var(--aau-blue)] text-white rounded-lg hover:bg-[var(--aau-light-blue)] transition-colors">
-            Submit
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
     // Sample leaderboard data - in a real app, this would come from a server
     const leaderboardData = [
@@ -269,16 +232,6 @@
       { team: "Algorithm Experts", score: 0.201, entries: 9, lastSubmission: "1 day ago" },
       { team: "Prediction Pros", score: 0.212, entries: 11, lastSubmission: "2 hours ago" }
     ];
-
-    // Available teams for selection
-    const availableTeams = [
-      "Team Alpha", "Data Ninjas", "ML Masters", "AI Warriors", 
-      "Code Breakers", "Data Scientists", "Algorithm Experts", 
-      "Prediction Pros", "New Team"
-    ];
-
-    // Store uploaded file temporarily
-    let uploadedFile = null;
 
     // Function to sort data by score (ascending - lower is better)
     function sortLeaderboard(data) {
@@ -311,121 +264,23 @@
       `).join('');
     }
 
-    // Function to populate team select dropdown
-    function populateTeamSelect() {
-      const teamSelect = document.getElementById('teamSelect');
-      teamSelect.innerHTML = '<option value="">Select a team...</option>';
+    // Function to handle form submission
+    function handleFormSubmit(event) {
+      event.preventDefault();
       
-      availableTeams.forEach(team => {
-        const option = document.createElement('option');
-        option.value = team;
-        option.textContent = team;
-        teamSelect.appendChild(option);
-      });
-    }
-
-    // Function to show team selection modal
-    function showTeamSelectionModal(file) {
-      uploadedFile = file;
-      const modal = document.getElementById('teamSelectionModal');
-      modal.classList.remove('hidden');
-      populateTeamSelect();
-    }
-
-    // Function to hide team selection modal
-    function hideTeamSelectionModal() {
-      const modal = document.getElementById('teamSelectionModal');
-      modal.classList.add('hidden');
-      uploadedFile = null;
-      
-      // Reset form
-      document.getElementById('teamSelect').value = '';
-      document.getElementById('newTeamName').value = '';
-      document.getElementById('newTeamInput').classList.add('hidden');
-    }
-
-    // Function to handle team selection change
-    function handleTeamSelectionChange() {
-      const teamSelect = document.getElementById('teamSelect');
-      const newTeamInput = document.getElementById('newTeamInput');
-      
-      if (teamSelect.value === 'New Team') {
-        newTeamInput.classList.remove('hidden');
-        document.getElementById('newTeamName').required = true;
-      } else {
-        newTeamInput.classList.add('hidden');
-        document.getElementById('newTeamName').required = false;
-      }
-    }
-
-    // Function to handle team confirmation
-    function handleTeamConfirmation() {
-      const teamSelect = document.getElementById('teamSelect');
-      const newTeamName = document.getElementById('newTeamName');
-      
-      let selectedTeam = teamSelect.value;
-      
-      if (selectedTeam === 'New Team') {
-        selectedTeam = newTeamName.value.trim();
-        if (!selectedTeam) {
-          alert('Please enter a team name');
-          return;
-        }
-      }
-      
-      if (!selectedTeam) {
-        alert('Please select a team');
-        return;
-      }
-      
-      // Simulate adding a new entry with the selected team
+      // Simulate adding a new entry
       const newEntry = {
-        team: selectedTeam,
+        team: "Your Team", // In real app, get from user input
         score: Math.random() * 0.1 + 0.1, // Simulate random score
         entries: 1,
         lastSubmission: "Just now"
       };
       
-      // Check if team already exists
-      const existingTeamIndex = leaderboardData.findIndex(entry => entry.team === selectedTeam);
-      
-      if (existingTeamIndex !== -1) {
-        // Update existing team's score and entries
-        leaderboardData[existingTeamIndex].score = newEntry.score;
-        leaderboardData[existingTeamIndex].entries += 1;
-        leaderboardData[existingTeamIndex].lastSubmission = newEntry.lastSubmission;
-      } else {
-        // Add new team
-        leaderboardData.push(newEntry);
-      }
-      
+      leaderboardData.push(newEntry);
       renderLeaderboard();
-      hideTeamSelectionModal();
       
       // Show success message
-      alert(`Prediction submitted successfully for ${selectedTeam}!`);
-    }
-
-    // Function to handle form submission
-    function handleFormSubmit(event) {
-      event.preventDefault();
-      
-      const fileInput = event.target.querySelector('input[type="file"]');
-      const file = fileInput.files[0];
-      
-      if (!file) {
-        alert('Please select a file to upload');
-        return;
-      }
-      
-      // Validate file type
-      if (!file.name.toLowerCase().endsWith('.csv')) {
-        alert('Please upload a CSV file');
-        return;
-      }
-      
-      // Show team selection modal
-      showTeamSelectionModal(file);
+      alert('Prediction submitted successfully!');
     }
 
     // Initialize leaderboard when page loads
@@ -437,30 +292,6 @@
       if (form) {
         form.addEventListener('submit', handleFormSubmit);
       }
-      
-      // Add modal event listeners
-      const modal = document.getElementById('teamSelectionModal');
-      const closeModal = document.getElementById('closeModal');
-      const cancelTeam = document.getElementById('cancelTeam');
-      const confirmTeam = document.getElementById('confirmTeam');
-      const teamSelect = document.getElementById('teamSelect');
-      
-      // Close modal handlers
-      closeModal.addEventListener('click', hideTeamSelectionModal);
-      cancelTeam.addEventListener('click', hideTeamSelectionModal);
-      
-      // Confirm team selection
-      confirmTeam.addEventListener('click', handleTeamConfirmation);
-      
-      // Handle team selection change
-      teamSelect.addEventListener('change', handleTeamSelectionChange);
-      
-      // Close modal when clicking outside
-      modal.addEventListener('click', function(event) {
-        if (event.target === modal) {
-          hideTeamSelectionModal();
-        }
-      });
     });
 
     // Auto-refresh leaderboard every 30 seconds (optional)
