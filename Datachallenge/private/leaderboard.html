@@ -230,20 +230,21 @@
       const storedData = localStorage.getItem('leaderboardData');
       if (storedData) {
         const data = JSON.parse(storedData);
-        // Migrate existing data to include lastScore field
+        // Migrate existing data to include lastScore and bestScore fields
         return data.map(entry => ({
           ...entry,
-          lastScore: entry.lastScore || null
+          lastScore: entry.lastScore || null,
+          bestScore: entry.bestScore || entry.score || null
         }));
       }
       
       // Default empty leaderboard for the 5 teams
       return [
-        { teamId: 'aau26_team1', team: 'Team 1', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null },
-        { teamId: 'aau26_team2', team: 'Team 2', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null },
-        { teamId: 'aau26_team3', team: 'Team 3', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null },
-        { teamId: 'aau26_team4', team: 'Team 4', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null },
-        { teamId: 'aau26_team5', team: 'Team 5', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null }
+        { teamId: 'aau26_team1', team: 'Team 1', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null },
+        { teamId: 'aau26_team2', team: 'Team 2', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null },
+        { teamId: 'aau26_team3', team: 'Team 3', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null },
+        { teamId: 'aau26_team4', team: 'Team 4', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null },
+        { teamId: 'aau26_team5', team: 'Team 5', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null }
       ];
     }
     
@@ -390,19 +391,23 @@
               score: null,
               entries: 0,
               lastSubmission: 'No submissions yet',
-              lastScore: null
+              lastScore: null,
+              bestScore: null
             };
             leaderboardData.push(teamEntry);
           }
           
-          // Update score if this is the first submission or if it's better (lower RMSE is better)
-          if (teamEntry.score === null || rmse < teamEntry.score) {
-            teamEntry.score = rmse;
-          }
+          // Always update score to the latest submission (for ranking)
+          teamEntry.score = rmse;
           
           teamEntry.entries += 1;
           teamEntry.lastSubmission = "Just now";
           teamEntry.lastScore = rmse; // Always save the latest score
+          
+          // Track best score separately
+          if (teamEntry.bestScore === null || rmse < teamEntry.bestScore) {
+            teamEntry.bestScore = rmse;
+          }
           
           // Save to localStorage
           saveLeaderboardData();
@@ -410,8 +415,9 @@
           // Re-render leaderboard
           renderLeaderboard();
           
-          // Show success message with RMSE
-          alert(`Upload successful!\nRMSE Score: ${rmse.toFixed(4)}`);
+          // Show success message with RMSE and best score
+          const bestScoreText = teamEntry.bestScore !== null ? `\nBest Score: ${teamEntry.bestScore.toFixed(4)}` : '';
+          alert(`Upload successful!\nLast Score: ${rmse.toFixed(4)}${bestScoreText}`);
           
         } catch (error) {
           alert('Error processing CSV file: ' + error.message);
