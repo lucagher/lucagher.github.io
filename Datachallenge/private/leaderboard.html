@@ -397,17 +397,17 @@
             leaderboardData.push(teamEntry);
           }
           
+          // Track best score separately (before updating current score)
+          if (teamEntry.bestScore === null || rmse < teamEntry.bestScore) {
+            teamEntry.bestScore = rmse;
+          }
+          
           // Always update score to the latest submission (for ranking)
           teamEntry.score = rmse;
           
           teamEntry.entries += 1;
           teamEntry.lastSubmission = "Just now";
           teamEntry.lastScore = rmse; // Always save the latest score
-          
-          // Track best score separately
-          if (teamEntry.bestScore === null || rmse < teamEntry.bestScore) {
-            teamEntry.bestScore = rmse;
-          }
           
           // Save to localStorage
           saveLeaderboardData();
@@ -416,6 +416,10 @@
           renderLeaderboard();
           
           // Show success message with RMSE and best score
+          console.log('Team entry:', teamEntry);
+          console.log('Current RMSE:', rmse);
+          console.log('Best score:', teamEntry.bestScore);
+          
           const bestScoreText = teamEntry.bestScore !== null ? `\nBest Score: ${teamEntry.bestScore.toFixed(4)}` : '';
           alert(`Upload successful!\nLast Score: ${rmse.toFixed(4)}${bestScoreText}`);
           
