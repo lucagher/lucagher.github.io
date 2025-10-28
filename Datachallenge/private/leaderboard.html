@@ -229,22 +229,16 @@
     function initializeLeaderboard() {
       const storedData = localStorage.getItem('leaderboardData');
       if (storedData) {
-        const data = JSON.parse(storedData);
-        // Migrate existing data to include lastScore and bestScore fields
-        return data.map(entry => ({
-          ...entry,
-          lastScore: entry.lastScore || null,
-          bestScore: entry.bestScore || entry.score || null
-        }));
+        return JSON.parse(storedData);
       }
       
       // Default empty leaderboard for the 5 teams
       return [
-        { teamId: 'aau26_team1', team: 'Team 1', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null },
-        { teamId: 'aau26_team2', team: 'Team 2', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null },
-        { teamId: 'aau26_team3', team: 'Team 3', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null },
-        { teamId: 'aau26_team4', team: 'Team 4', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null },
-        { teamId: 'aau26_team5', team: 'Team 5', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null, bestScore: null }
+        { teamId: 'aau26_team1', team: 'Team 1', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team2', team: 'Team 2', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team3', team: 'Team 3', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team4', team: 'Team 4', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team5', team: 'Team 5', score: null, entries: 0, lastSubmission: 'No submissions yet' }
       ];
     }
     
@@ -390,29 +384,16 @@
               team: teamName,
               score: null,
               entries: 0,
-              lastSubmission: 'No submissions yet',
-              lastScore: null,
-              bestScore: null
+              lastSubmission: 'No submissions yet'
             };
             leaderboardData.push(teamEntry);
           }
           
-          // Ensure team entry has all required fields
-          if (!teamEntry.bestScore) {
-            teamEntry.bestScore = teamEntry.score || null;
-          }
-          
-          // Track best score separately (before updating current score)
-          if (teamEntry.bestScore === null || rmse < teamEntry.bestScore) {
-            teamEntry.bestScore = rmse;
-          }
-          
-          // Always update score to the latest submission (for ranking)
+          // Update score with the latest submission (not the best)
           teamEntry.score = rmse;
           
           teamEntry.entries += 1;
           teamEntry.lastSubmission = "Just now";
-          teamEntry.lastScore = rmse; // Always save the latest score
           
           // Save to localStorage
           saveLeaderboardData();
@@ -420,21 +401,8 @@
           // Re-render leaderboard
           renderLeaderboard();
           
-          // Show success message with RMSE and best score
-          console.log('Team entry:', teamEntry);
-          console.log('Current RMSE:', rmse);
-          console.log('Best score:', teamEntry.bestScore);
-          console.log('Entries:', teamEntry.entries);
-          
-          let message = `Upload successful!\nLast Score: ${rmse.toFixed(4)}`;
-          
-          if (teamEntry.bestScore !== null && teamEntry.bestScore !== rmse) {
-            message += `\nBest Score: ${teamEntry.bestScore.toFixed(4)}`;
-          } else if (teamEntry.entries === 1) {
-            message += `\nFirst submission!`;
-          }
-          
-          alert(message);
+          // Show success message with RMSE
+          alert(`Upload successful!\nLatest RMSE Score: ${rmse.toFixed(4)}`);
           
         } catch (error) {
           alert('Error processing CSV file: ' + error.message);
