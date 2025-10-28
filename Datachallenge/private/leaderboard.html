@@ -229,16 +229,21 @@
     function initializeLeaderboard() {
       const storedData = localStorage.getItem('leaderboardData');
       if (storedData) {
-        return JSON.parse(storedData);
+        const data = JSON.parse(storedData);
+        // Migrate existing data to include lastScore field
+        return data.map(entry => ({
+          ...entry,
+          lastScore: entry.lastScore || null
+        }));
       }
       
       // Default empty leaderboard for the 5 teams
       return [
-        { teamId: 'aau26_team1', team: 'Team 1', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team2', team: 'Team 2', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team3', team: 'Team 3', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team4', team: 'Team 4', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team5', team: 'Team 5', score: null, entries: 0, lastSubmission: 'No submissions yet' }
+        { teamId: 'aau26_team1', team: 'Team 1', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null },
+        { teamId: 'aau26_team2', team: 'Team 2', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null },
+        { teamId: 'aau26_team3', team: 'Team 3', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null },
+        { teamId: 'aau26_team4', team: 'Team 4', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null },
+        { teamId: 'aau26_team5', team: 'Team 5', score: null, entries: 0, lastSubmission: 'No submissions yet', lastScore: null }
       ];
     }
     
@@ -384,7 +389,8 @@
               team: teamName,
               score: null,
               entries: 0,
-              lastSubmission: 'No submissions yet'
+              lastSubmission: 'No submissions yet',
+              lastScore: null
             };
             leaderboardData.push(teamEntry);
           }
@@ -396,6 +402,7 @@
           
           teamEntry.entries += 1;
           teamEntry.lastSubmission = "Just now";
+          teamEntry.lastScore = rmse; // Always save the latest score
           
           // Save to localStorage
           saveLeaderboardData();
