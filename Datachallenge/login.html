@@ -290,24 +290,33 @@
       const competition = getCompetition();
       const compData = competitions[competition];
       
+      console.log('Password entered:', password);
+      console.log('Competition:', competition);
+      console.log('Team credentials:', teamCredentials);
+      
       // Check if it's a team credential
       let validTeam = null;
       for (const [teamId, credentials] of Object.entries(teamCredentials)) {
+        console.log('Checking team:', teamId, 'password:', credentials.password);
         if (password === credentials.password) {
           validTeam = { id: teamId, name: credentials.teamName };
+          console.log('Valid team found:', validTeam);
           break;
         }
       }
       
       // Check if it matches competition password OR team credential
       if ((compData && password === compData.password) || validTeam) {
+        console.log('Login successful!');
         // Store team info in sessionStorage if it's a team login
         if (validTeam) {
           sessionStorage.setItem('teamId', validTeam.id);
           sessionStorage.setItem('teamName', validTeam.name);
+          console.log('Team info stored:', validTeam);
         }
         window.location.href = compData.redirect;
       } else {
+        console.log('Login failed');
         document.getElementById('error').textContent = "Incorrect password, try again.";
       }
     }
@@ -366,21 +375,21 @@
           </div>
         </div>
         
-        <div class="space-y-4 sm:space-y-6">
+        <form onsubmit="event.preventDefault(); checkPassword(); return false;" class="space-y-4 sm:space-y-6">
           <div>
             <label for="password" class="form-label text-sm" style="font-family: 'Poppins', sans-serif;">Access Password</label>
             <input type="password" id="password" placeholder="Enter access password"
                    class="input-field w-full rounded-xl px-4 py-3 sm:py-4 focus:outline-none focus:ring-0"
-                   style="font-family: 'Poppins', sans-serif;">
+                   style="font-family: 'Poppins', sans-serif;" required>
           </div>
           
-          <button onclick="checkPassword()" class="login-button bg-gradient-to-r from-[var(--aau-blue)] to-[var(--aau-light-blue)] text-white py-3 sm:py-4 rounded-xl w-full font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] relative overflow-hidden"
+          <button type="submit" class="login-button bg-gradient-to-r from-[var(--aau-blue)] to-[var(--aau-light-blue)] text-white py-3 sm:py-4 rounded-xl w-full font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] relative overflow-hidden"
                   style="font-family: 'Poppins', sans-serif; box-shadow: 0 8px 24px rgba(39, 108, 138, 0.2);">
             <span class="relative z-10">Access Dashboard →</span>
           </button>
           
           <p id="error" class="text-red-500 text-sm text-center" style="font-family: 'Poppins', sans-serif;"></p>
-        </div>
+        </form>
       </div>
     </div>
   </main>

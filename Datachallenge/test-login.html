@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Test Team Login</h1>
+    <p>Try these passwords:</p>
+    <ul>
+        <li>aau26_team1</li>
+        <li>aau26_team2</li>
+        <li>aau26_team3</li>
+        <li>aau26_team4</li>
+        <li>aau26_team5</li>
+    </ul>
+    
+    <form onsubmit="event.preventDefault(); testLogin(); return false;">
+        <input type="password" id="testPassword" placeholder="Enter password">
+        <button type="submit">Test Login</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        const teamCredentials = {
+            'aau26_team1': { password: 'aau26_team1', teamName: 'Team 1' },
+            'aau26_team2': { password: 'aau26_team2', teamName: 'Team 2' },
+            'aau26_team3': { password: 'aau26_team3', teamName: 'Team 3' },
+            'aau26_team4': { password: 'aau26_team4', teamName: 'Team 4' },
+            'aau26_team5': { password: 'aau26_team5', teamName: 'Team 5' }
+        };
+
+        function testLogin() {
+            const password = document.getElementById('testPassword').value;
+            const result = document.getElementById('result');
+            
+            console.log('Testing password:', password);
+            
+            let validTeam = null;
+            for (const [teamId, credentials] of Object.entries(teamCredentials)) {
+                console.log('Checking:', teamId, 'against:', credentials.password);
+                if (password === credentials.password) {
+                    validTeam = { id: teamId, name: credentials.teamName };
+                    break;
+                }
+            }
+            
+            if (validTeam) {
+                result.innerHTML = `<p style="color: green;">SUCCESS! Team: ${validTeam.name} (${validTeam.id})</p>`;
+                console.log('Login successful for:', validTeam);
+            } else {
+                result.innerHTML = `<p style="color: red;">FAILED! Password "${password}" not found</p>`;
+                console.log('Login failed for:', password);
+            }
+        }
+    </script>
+</body>
+</html>
