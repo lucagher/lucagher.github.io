@@ -397,6 +397,11 @@
             leaderboardData.push(teamEntry);
           }
           
+          // Ensure team entry has all required fields
+          if (!teamEntry.bestScore) {
+            teamEntry.bestScore = teamEntry.score || null;
+          }
+          
           // Track best score separately (before updating current score)
           if (teamEntry.bestScore === null || rmse < teamEntry.bestScore) {
             teamEntry.bestScore = rmse;
@@ -419,9 +424,17 @@
           console.log('Team entry:', teamEntry);
           console.log('Current RMSE:', rmse);
           console.log('Best score:', teamEntry.bestScore);
+          console.log('Entries:', teamEntry.entries);
           
-          const bestScoreText = teamEntry.bestScore !== null ? `\nBest Score: ${teamEntry.bestScore.toFixed(4)}` : '';
-          alert(`Upload successful!\nLast Score: ${rmse.toFixed(4)}${bestScoreText}`);
+          let message = `Upload successful!\nLast Score: ${rmse.toFixed(4)}`;
+          
+          if (teamEntry.bestScore !== null && teamEntry.bestScore !== rmse) {
+            message += `\nBest Score: ${teamEntry.bestScore.toFixed(4)}`;
+          } else if (teamEntry.entries === 1) {
+            message += `\nFirst submission!`;
+          }
+          
+          alert(message);
           
         } catch (error) {
           alert('Error processing CSV file: ' + error.message);
