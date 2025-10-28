@@ -193,26 +193,12 @@
     <section class="card p-4 sm:p-6 lg:p-8">
       <h2 class="title-section text-xl sm:text-2xl mb-4 sm:mb-6">Submit Predictions</h2>
       
-      <div class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h3 class="font-semibold text-blue-800 mb-2">📊 Prediction Format</h3>
-        <p class="text-sm text-blue-700 mb-2">Upload a CSV file with exactly 4 prediction values:</p>
-        <div class="bg-white p-2 rounded border text-xs font-mono text-gray-600">
-          prediction<br>
-          0.5<br>
-          1.2<br>
-          2.8<br>
-          -0.5
-        </div>
-        <p class="text-xs text-blue-600 mt-2">💡 Lower RMSE scores are better!</p>
-      </div>
-      
       <form id="uploadForm" class="space-y-4 sm:space-y-6">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Upload CSV File</label>
           <input type="file" accept=".csv" class="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 focus:outline-none focus:ring-2 focus:ring-[var(--aau-blue)] focus:border-transparent text-sm" required>
-          <p class="text-xs text-gray-500 mt-1">Must contain exactly 4 numeric values</p>
         </div>
-        <button type="submit" class="btn-primary text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg w-full sm:w-auto text-sm sm:text-base">Calculate RMSE & Submit</button>
+        <button type="submit" class="btn-primary text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg w-full sm:w-auto text-sm sm:text-base">Upload Predictions</button>
       </form>
     </section>
 
@@ -418,7 +404,7 @@
           renderLeaderboard();
           
           // Show success message with RMSE
-          alert(`Prediction submitted successfully!\nRMSE Score: ${rmse.toFixed(4)}\n${rmse < teamEntry.score ? 'New best score!' : 'Previous best score maintained.'}`);
+          alert(`Upload successful!\nRMSE Score: ${rmse.toFixed(4)}`);
           
         } catch (error) {
           alert('Error processing CSV file: ' + error.message);
