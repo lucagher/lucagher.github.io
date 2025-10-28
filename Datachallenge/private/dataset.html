@@ -125,13 +125,16 @@
         <h1 class="title-main text-2xl sm:text-3xl lg:text-4xl mb-4 font-bold" style="color: var(--aau-blue); font-family: 'Lato', sans-serif;">Competition Dashboard</h1>
         
         <!-- Back to Home Button -->
-        <div class="mt-4 sm:mt-6">
+        <div class="mt-4 sm:mt-6 flex gap-3">
           <a href="../index.html" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
             Back to Home
           </a>
+          <button onclick="logout()" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-900 rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
+            Logout
+          </button>
         </div>
       </div>
       
@@ -267,5 +270,14 @@
       </div>
     </section>
   </main>
+
+  <script>
+    // Logout function
+    function logout() {
+      sessionStorage.removeItem('teamId');
+      sessionStorage.removeItem('teamName');
+      window.location.href = '../login.html?competition=renewable';
+    }
+  </script>
 </body>
 </html>

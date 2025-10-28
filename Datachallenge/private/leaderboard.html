@@ -158,13 +158,16 @@
         <h1 class="title-main text-2xl sm:text-3xl lg:text-4xl mb-4 font-bold" style="color: var(--aau-blue); font-family: 'Lato', sans-serif;">Competition Dashboard</h1>
         
         <!-- Back to Home Button -->
-        <div class="mt-4 sm:mt-6">
+        <div class="mt-4 sm:mt-6 flex gap-3">
           <a href="../index.html" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
             Back to Home
           </a>
+          <button onclick="logout()" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-900 rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
+            Logout
+          </button>
         </div>
       </div>
       
@@ -221,26 +224,45 @@
   </main>
 
   <script>
-    // Sample leaderboard data - in a real app, this would come from a server
-    const leaderboardData = [
-      { team: "Team Alpha", score: 0.123, entries: 15, lastSubmission: "2 hours ago" },
-      { team: "Data Ninjas", score: 0.145, entries: 12, lastSubmission: "4 hours ago" },
-      { team: "ML Masters", score: 0.156, entries: 8, lastSubmission: "1 day ago" },
-      { team: "AI Warriors", score: 0.167, entries: 20, lastSubmission: "30 min ago" },
-      { team: "Code Breakers", score: 0.178, entries: 6, lastSubmission: "3 days ago" },
-      { team: "Data Scientists", score: 0.189, entries: 14, lastSubmission: "6 hours ago" },
-      { team: "Algorithm Experts", score: 0.201, entries: 9, lastSubmission: "1 day ago" },
-      { team: "Prediction Pros", score: 0.212, entries: 11, lastSubmission: "2 hours ago" }
-    ];
+    // Initialize leaderboard data from localStorage or use default data
+    function initializeLeaderboard() {
+      const storedData = localStorage.getItem('leaderboardData');
+      if (storedData) {
+        return JSON.parse(storedData);
+      }
+      
+      // Default empty leaderboard for the 5 teams
+      return [
+        { teamId: 'aau26_team1', team: 'Team 1', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team2', team: 'Team 2', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team3', team: 'Team 3', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team4', team: 'Team 4', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team5', team: 'Team 5', score: null, entries: 0, lastSubmission: 'No submissions yet' }
+      ];
+    }
+    
+    let leaderboardData = initializeLeaderboard();
 
     // Function to sort data by score (ascending - lower is better)
     function sortLeaderboard(data) {
-      return data.sort((a, b) => a.score - b.score);
+      return data.sort((a, b) => {
+        // Teams without scores go to the bottom
+        if (a.score === null && b.score === null) return 0;
+        if (a.score === null) return 1;
+        if (b.score === null) return -1;
+        return a.score - b.score;
+      });
     }
 
     // Function to format score
     function formatScore(score) {
+      if (score === null) return '-';
       return score.toFixed(3);
+    }
+    
+    // Function to save leaderboard data to localStorage
+    function saveLeaderboardData() {
+      localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData));
     }
 
     // Function to format last submission time
@@ -252,35 +274,79 @@
     function renderLeaderboard() {
       const sortedData = sortLeaderboard([...leaderboardData]);
       const tbody = document.getElementById('leaderboardBody');
+      const currentTeamId = sessionStorage.getItem('teamId');
       
-      tbody.innerHTML = sortedData.map((entry, index) => `
-        <tr class="table-row">
-          <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-base sm:text-lg font-semibold text-[var(--aau-blue)]">${index + 1}</td>
-          <td class="px-3 sm:px-6 py-3 sm:py-4 font-medium">${entry.team}</td>
-          <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono">${formatScore(entry.score)}</td>
-          <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-sm">${entry.entries}</td>
-          <td class="px-3 sm:px-6 py-3 sm:py-4 text-sm text-gray-600">${formatLastSubmission(entry.lastSubmission)}</td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = sortedData.map((entry, index) => {
+        const isCurrentTeam = entry.teamId === currentTeamId;
+        const rowClass = isCurrentTeam ? 'table-row bg-blue-50 font-semibold' : 'table-row';
+        const teamCellClass = isCurrentTeam ? 'px-3 sm:px-6 py-3 sm:py-4 font-medium text-[var(--aau-blue)]' : 'px-3 sm:px-6 py-3 sm:py-4 font-medium';
+        
+        return `
+          <tr class="${rowClass}">
+            <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-base sm:text-lg font-semibold text-[var(--aau-blue)]">${index + 1}</td>
+            <td class="${teamCellClass}">${entry.team}${isCurrentTeam ? ' <span class="text-xs">(You)</span>' : ''}</td>
+            <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono">${formatScore(entry.score)}</td>
+            <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-sm">${entry.entries}</td>
+            <td class="px-3 sm:px-6 py-3 sm:py-4 text-sm text-gray-600">${formatLastSubmission(entry.lastSubmission)}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // Function to handle form submission
     function handleFormSubmit(event) {
       event.preventDefault();
       
-      // Simulate adding a new entry
-      const newEntry = {
-        team: "Your Team", // In real app, get from user input
-        score: Math.random() * 0.1 + 0.1, // Simulate random score
-        entries: 1,
-        lastSubmission: "Just now"
-      };
+      // Get the current logged-in team
+      const currentTeamId = sessionStorage.getItem('teamId');
       
-      leaderboardData.push(newEntry);
+      if (!currentTeamId) {
+        alert('Please log in to submit predictions!');
+        return;
+      }
+      
+      // Find the team in the leaderboard
+      let teamEntry = leaderboardData.find(entry => entry.teamId === currentTeamId);
+      
+      if (!teamEntry) {
+        // Create a new entry if team doesn't exist in leaderboard
+        const teamName = sessionStorage.getItem('teamName') || 'Unknown Team';
+        teamEntry = {
+          teamId: currentTeamId,
+          team: teamName,
+          score: null,
+          entries: 0,
+          lastSubmission: 'No submissions yet'
+        };
+        leaderboardData.push(teamEntry);
+      }
+      
+      // Update team entry with simulated score (in real app, this would come from backend)
+      const randomScore = Math.random() * 0.1 + 0.1;
+      
+      // Update score if this is the first submission or if it's better
+      if (teamEntry.score === null || randomScore < teamEntry.score) {
+        teamEntry.score = randomScore;
+      }
+      
+      teamEntry.entries += 1;
+      teamEntry.lastSubmission = "Just now";
+      
+      // Save to localStorage
+      saveLeaderboardData();
+      
+      // Re-render leaderboard
       renderLeaderboard();
       
       // Show success message
-      alert('Prediction submitted successfully!');
+      alert('Prediction submitted successfully! Your score: ' + randomScore.toFixed(3));
+    }
+
+    // Logout function
+    function logout() {
+      sessionStorage.removeItem('teamId');
+      sessionStorage.removeItem('teamName');
+      window.location.href = '../login.html?competition=renewable';
     }
 
     // Initialize leaderboard when page loads

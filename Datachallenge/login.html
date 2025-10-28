@@ -230,6 +230,15 @@
     }
   </style>
   <script>
+    // Team credentials for the competition
+    const teamCredentials = {
+      'aau26_team1': { password: 'aau26_team1', teamName: 'Team 1' },
+      'aau26_team2': { password: 'aau26_team2', teamName: 'Team 2' },
+      'aau26_team3': { password: 'aau26_team3', teamName: 'Team 3' },
+      'aau26_team4': { password: 'aau26_team4', teamName: 'Team 4' },
+      'aau26_team5': { password: 'aau26_team5', teamName: 'Team 5' }
+    };
+    
     // Multiple competition password system
     const competitions = {
       'renewable': {
@@ -281,7 +290,22 @@
       const competition = getCompetition();
       const compData = competitions[competition];
       
-      if (compData && password === compData.password) {
+      // Check if it's a team credential
+      let validTeam = null;
+      for (const [teamId, credentials] of Object.entries(teamCredentials)) {
+        if (password === credentials.password) {
+          validTeam = { id: teamId, name: credentials.teamName };
+          break;
+        }
+      }
+      
+      // Check if it matches competition password OR team credential
+      if ((compData && password === compData.password) || validTeam) {
+        // Store team info in sessionStorage if it's a team login
+        if (validTeam) {
+          sessionStorage.setItem('teamId', validTeam.id);
+          sessionStorage.setItem('teamName', validTeam.name);
+        }
         window.location.href = compData.redirect;
       } else {
         document.getElementById('error').textContent = "Incorrect password, try again.";
