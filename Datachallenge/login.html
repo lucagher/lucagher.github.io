@@ -230,36 +230,45 @@
     }
   </style>
   <script>
-    // Team credentials for the competition
+    // Team credentials (store SHA-256 hashes instead of plaintext)
     const teamCredentials = {
-      'aau26_team1': { password: 'P-valuepirates_ism1', teamName: 'P-value pirates' },
-      'aau26_team2': { password: 'TheRvengers_ism2', teamName: 'The Rvengers' },
-      'aau26_team3': { password: 'Outliers_ism3', teamName: 'Outliers' },
-      'aau26_team4': { password: 'Smoothoperators_ism4', teamName: 'Smooth operators' },
-      'aau26_team5': { password: 'Byteme_ism5', teamName: 'Byte me' }
+      'aau26_team1': { passwordHash: 'f15f3c248a85e7bde52b25fcc10690bf92400a6dc0fd87dac287de548cbd86b3', teamName: 'P-value pirates' },
+      'aau26_team2': { passwordHash: '530ae0bd2265f072761a0eb56e9bfe229fad571e77dac28132d9d70869ef6ec6', teamName: 'The Rvengers' },
+      'aau26_team3': { passwordHash: '0c0d392f78381e7d741de92245dfd14c8c0e9e920def2a46877cdd196d04d1bb', teamName: 'Outliers' },
+      'aau26_team4': { passwordHash: '76da9c206c2ffb230430582312346401a929668d3fe4d9de3a3944901683d72f', teamName: 'Smooth operators' },
+      'aau26_team5': { passwordHash: '900614fbc3ac4c84a1122d5656e769fbc1347c4ffd682686a9e8c7b010b1f593', teamName: 'Byte me' }
     };
     
-    // Multiple competition password system
+    // Multiple competition password system (hash stored)
     const competitions = {
       'renewable': {
-        password: 'AAU2025',
+        passwordHash: '2ea7a8e0bddbcc81de917ea0991e93a8f17184dde6d1d997277d3dbf6d5cf1e0', // AAU2025
         redirect: 'private/overview.html',
         name: 'Renewable Energy Forecasting',
         emoji: '⚡'
       },
       'medical': {
-        password: 'MED2025',
+        passwordHash: '0214f1e1ead8dcc1d148507a867517a1bcfc6be897747a5cceb56c83e7b7ba21', // MED2025
         redirect: 'private/medical/overview.html',
         name: 'Medical Image Analysis',
         emoji: '🏥'
       },
       'autonomous': {
-        password: 'AUTO2025',
+        passwordHash: 'd81317016a6c988b4e42c738d45df5336e256d9241b90a813f8e247698b47f31', // AUTO2025
         redirect: 'private/autonomous/overview.html',
         name: 'Autonomous Vehicle Challenge',
         emoji: '🚗'
       }
     };
+
+    // Compute SHA-256 hex digest in browser
+    async function sha256Hex(str) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(str);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
     // Get competition from URL parameter
     function getCompetition() {
@@ -285,47 +294,41 @@
       }
     }
 
-    function checkPassword() {
+    async function checkPassword() {
       const password = document.getElementById('password').value;
       const competition = getCompetition();
       const compData = competitions[competition];
-      
-      console.log('Password entered:', password);
-      console.log('Competition:', competition);
-      console.log('Team credentials:', teamCredentials);
-      
-      // Check if it's a team credential
+
+      const enteredHash = await sha256Hex(password);
+
+      // Check team credentials by comparing hashes
       let validTeam = null;
       for (const [teamId, credentials] of Object.entries(teamCredentials)) {
-        console.log('Checking team:', teamId, 'password:', credentials.password);
-        if (password === credentials.password) {
+        if (enteredHash === credentials.passwordHash) {
           validTeam = { id: teamId, name: credentials.teamName };
-          console.log('Valid team found:', validTeam);
           break;
         }
       }
-      
-      // Check if it matches competition password OR team credential
-      if ((compData && password === compData.password) || validTeam) {
-        console.log('Login successful!');
-        
-        // Store team info in sessionStorage if it's a team login
+
+      // Check competition password by hash
+      const isCompetitionPassword = compData && enteredHash === compData.passwordHash;
+
+      if (isCompetitionPassword || validTeam) {
+        // Team login
         if (validTeam) {
           sessionStorage.setItem('teamId', validTeam.id);
           sessionStorage.setItem('teamName', validTeam.name);
-          sessionStorage.removeItem('isAdmin'); // Ensure not admin
-          console.log('Team info stored:', validTeam);
+          sessionStorage.removeItem('isAdmin');
         } else {
-          // If it's a competition password (admin access)
-          if (password === 'AAU2025') {
-             sessionStorage.setItem('isAdmin', 'true');
-             sessionStorage.removeItem('teamId'); // Ensure no team ID
-             sessionStorage.removeItem('teamName');
+          // Admin login (renewable competition password)
+          if (competition === 'renewable') {
+            sessionStorage.setItem('isAdmin', 'true');
+            sessionStorage.removeItem('teamId');
+            sessionStorage.removeItem('teamName');
           }
         }
         window.location.href = compData.redirect;
       } else {
-        console.log('Login failed');
         document.getElementById('error').textContent = "Incorrect password, try again.";
       }
     }
