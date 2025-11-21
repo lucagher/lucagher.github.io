@@ -120,11 +120,10 @@
               Logout
             </button>
           </div>
-          <!-- User Info with Logo -->
+          <!-- User Info with Emoji -->
           <div id="userInfo" class="flex items-center gap-2 mt-2" style="display: none;">
-            <img id="userLogo" src="" alt="Team Logo" class="w-8 h-8 rounded-full object-cover border-2 border-[var(--aau-blue)]" style="display: none;">
+            <span id="userEmoji" class="text-2xl cursor-pointer hover:scale-110 transition-transform" onclick="changeTeamEmoji()" title="Click to change emoji"></span>
             <span id="userName" class="text-sm font-medium text-gray-700"></span>
-            <button onclick="changeTeamLogo()" class="ml-2 text-xs text-[var(--aau-blue)] hover:underline">Change Logo</button>
           </div>
         </div>
       </div>
@@ -218,49 +217,49 @@
   </main>
 
   <script>
-    // Function to get team logo
-    function getTeamLogo(teamId) {
-      const logos = JSON.parse(localStorage.getItem('teamLogos') || '{}');
-      return logos[teamId] || null;
+    // Team emoji mapping (default emojis)
+    const teamDefaultEmojis = {
+      'aau26_team1': '🏴‍☠️',
+      'aau26_team2': '🦸',
+      'aau26_team3': '📊',
+      'aau26_team4': '🎯',
+      'aau26_team5': '💻'
+    };
+
+    // Function to get team emoji
+    function getTeamEmoji(teamId) {
+      const emojis = JSON.parse(localStorage.getItem('teamEmojis') || '{}');
+      return emojis[teamId] || teamDefaultEmojis[teamId] || '👤';
     }
 
-    // Function to save team logo
-    function saveTeamLogo(teamId, logoData) {
-      const logos = JSON.parse(localStorage.getItem('teamLogos') || '{}');
-      logos[teamId] = logoData;
-      localStorage.setItem('teamLogos', JSON.stringify(logos));
+    // Function to save team emoji
+    function saveTeamEmoji(teamId, emoji) {
+      const emojis = JSON.parse(localStorage.getItem('teamEmojis') || '{}');
+      emojis[teamId] = emoji;
+      localStorage.setItem('teamEmojis', JSON.stringify(emojis));
     }
 
-    // Function to change team logo
-    function changeTeamLogo() {
+    // Function to change team emoji
+    function changeTeamEmoji() {
       const currentTeamId = sessionStorage.getItem('teamId');
       if (!currentTeamId) {
-        alert('Please log in to change your team logo!');
+        alert('Please log in to change your team emoji!');
         return;
       }
 
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.onchange = function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        if (file.size > 2 * 1024 * 1024) {
-          alert('Image size must be less than 2MB');
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const logoData = e.target.result;
-          saveTeamLogo(currentTeamId, logoData);
+      const currentEmoji = getTeamEmoji(currentTeamId);
+      const newEmoji = prompt('Enter a new emoji for your team:', currentEmoji);
+      
+      if (newEmoji && newEmoji.trim()) {
+        // Validate that it's mostly emoji characters
+        const emojiRegex = /^[\p{Emoji}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}\p{Emoji_Modifier}\p{Emoji_Component}]+$/u;
+        if (emojiRegex.test(newEmoji.trim()) || newEmoji.length <= 3) {
+          saveTeamEmoji(currentTeamId, newEmoji.trim());
           updateUserInfo();
-          alert('Logo updated successfully!');
-        };
-        reader.readAsDataURL(file);
-      };
-      input.click();
+        } else {
+          alert('Please enter a valid emoji!');
+        }
+      }
     }
 
     // Function to update user info display
@@ -269,19 +268,12 @@
       const currentTeamName = sessionStorage.getItem('teamName');
       const userInfo = document.getElementById('userInfo');
       const userName = document.getElementById('userName');
-      const userLogo = document.getElementById('userLogo');
+      const userEmoji = document.getElementById('userEmoji');
 
       if (currentTeamId && currentTeamName) {
         userInfo.style.display = 'flex';
         userName.textContent = currentTeamName;
-        
-        const logo = getTeamLogo(currentTeamId);
-        if (logo) {
-          userLogo.src = logo;
-          userLogo.style.display = 'block';
-        } else {
-          userLogo.style.display = 'none';
-        }
+        userEmoji.textContent = getTeamEmoji(currentTeamId);
       } else {
         userInfo.style.display = 'none';
       }
