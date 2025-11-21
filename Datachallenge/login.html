@@ -238,14 +238,26 @@
       'aau26_team4': { passwordHash: '76da9c206c2ffb230430582312346401a929668d3fe4d9de3a3944901683d72f', teamName: 'Smooth operators' },
       'aau26_team5': { passwordHash: '900614fbc3ac4c84a1122d5656e769fbc1347c4ffd682686a9e8c7b010b1f593', teamName: 'Byte me' }
     };
-    
-    // Multiple competition password system (only renewable active)
+
+    // Multiple competition password system (hash stored)
     const competitions = {
       'renewable': {
-        passwordHash: '2ea7a8e0bddbcc81de917ea0991e93a8f17184dde6d1d997277d3dbf6d5cf1e0', // 5
+        passwordHash: '2ea7a8e0bddbcc81de917ea0991e93a8f17184dde6d1d997277d3dbf6d5cf1e0', // AAU2025
         redirect: 'private/overview.html',
         name: 'Renewable Energy Forecasting',
         emoji: '⚡'
+      },
+      'medical': {
+        passwordHash: '0214f1e1ead8dcc1d148507a867517a1bcfc6be897747a5cceb56c83e7b7ba21', // MED2025
+        redirect: 'private/medical/overview.html',
+        name: 'Medical Image Analysis',
+        emoji: '🏥'
+      },
+      'autonomous': {
+        passwordHash: 'd81317016a6c988b4e42c738d45df5336e256d9241b90a813f8e247698b47f31', // AUTO2025
+        redirect: 'private/autonomous/overview.html',
+        name: 'Autonomous Vehicle Challenge',
+        emoji: '🚗'
       }
     };
 
@@ -258,10 +270,10 @@
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // Get competition from URL parameter with fallback to renewable
+    // Get competition from URL parameter
     function getCompetition() {
-      const p = new URLSearchParams(window.location.search).get('competition');
-      return (p && competitions[p]) ? p : 'renewable';
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('competition') || 'renewable';
     }
 
     // Update page based on competition
