@@ -1,0 +1,13 @@
+## Secrets / local env
+.env
+
+# Generated credential hashes for client
+Datachallenge/assets/credential-hashes.js
+
+# Node artifacts (if you use the generator script)
+node_modules
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+

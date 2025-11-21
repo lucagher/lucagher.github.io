@@ -8,6 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Generated at deploy-time from environment (never commit this file) -->
+  <script src="assets/credential-hashes.js"></script>
   <style>
     :root {
       --aau-blue: #276C8A;
@@ -230,34 +232,22 @@
     }
   </style>
   <script>
-    // Team credentials (store SHA-256 hashes instead of plaintext)
+    // Team credentials (hashes are injected at deploy-time via assets/credential-hashes.js)
     const teamCredentials = {
-      'aau26_team1': { passwordHash: 'f15f3c248a85e7bde52b25fcc10690bf92400a6dc0fd87dac287de548cbd86b3', teamName: 'P-value pirates' },
-      'aau26_team2': { passwordHash: '530ae0bd2265f072761a0eb56e9bfe229fad571e77dac28132d9d70869ef6ec6', teamName: 'The Rvengers' },
-      'aau26_team3': { passwordHash: '0c0d392f78381e7d741de92245dfd14c8c0e9e920def2a46877cdd196d04d1bb', teamName: 'Outliers' },
-      'aau26_team4': { passwordHash: '76da9c206c2ffb230430582312346401a929668d3fe4d9de3a3944901683d72f', teamName: 'Smooth operators' },
-      'aau26_team5': { passwordHash: '900614fbc3ac4c84a1122d5656e769fbc1347c4ffd682686a9e8c7b010b1f593', teamName: 'Byte me' }
+      'aau26_team1': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team1?.passwordHash || ''), teamName: 'P-value pirates' },
+      'aau26_team2': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team2?.passwordHash || ''), teamName: 'The Rvengers' },
+      'aau26_team3': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team3?.passwordHash || ''), teamName: 'Outliers' },
+      'aau26_team4': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team4?.passwordHash || ''), teamName: 'Smooth operators' },
+      'aau26_team5': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team5?.passwordHash || ''), teamName: 'Byte me' }
     };
 
-    // Multiple competition password system (hash stored)
+    // Multiple competition password system (passwordHash injected at deploy-time)
     const competitions = {
       'renewable': {
-        passwordHash: '2ea7a8e0bddbcc81de917ea0991e93a8f17184dde6d1d997277d3dbf6d5cf1e0', // AAU2025
+        passwordHash: (window.CREDENTIAL_HASHES?.competitions?.renewable?.passwordHash || ''), // from env
         redirect: 'private/overview.html',
         name: 'Renewable Energy Forecasting',
         emoji: '⚡'
-      },
-      'medical': {
-        passwordHash: '0214f1e1ead8dcc1d148507a867517a1bcfc6be897747a5cceb56c83e7b7ba21', // MED2025
-        redirect: 'private/medical/overview.html',
-        name: 'Medical Image Analysis',
-        emoji: '🏥'
-      },
-      'autonomous': {
-        passwordHash: 'd81317016a6c988b4e42c738d45df5336e256d9241b90a813f8e247698b47f31', // AUTO2025
-        redirect: 'private/autonomous/overview.html',
-        name: 'Autonomous Vehicle Challenge',
-        emoji: '🚗'
       }
     };
 
