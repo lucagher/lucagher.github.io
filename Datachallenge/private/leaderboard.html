@@ -234,11 +234,11 @@
       
       // Default empty leaderboard for the 5 teams
       return [
-        { teamId: 'aau26_team1', team: 'Team 1', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team2', team: 'Team 2', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team3', team: 'Team 3', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team4', team: 'Team 4', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team5', team: 'Team 5', score: null, entries: 0, lastSubmission: 'No submissions yet' }
+        { teamId: 'aau26_team1', team: 'P-value pirates', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team2', team: 'The Rvengers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team3', team: 'Outliers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team4', team: 'Smooth operators', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+        { teamId: 'aau26_team5', team: 'Byte me', score: null, entries: 0, lastSubmission: 'No submissions yet' }
       ];
     }
     
@@ -416,12 +416,43 @@
     function logout() {
       sessionStorage.removeItem('teamId');
       sessionStorage.removeItem('teamName');
+      sessionStorage.removeItem('isAdmin');
       window.location.href = '../login.html?competition=renewable';
+    }
+
+    // Function to reset leaderboard (Admin only)
+    function resetLeaderboard() {
+      if (!confirm('Are you sure you want to reset the leaderboard? This action cannot be undone.')) {
+        return;
+      }
+      
+      localStorage.removeItem('leaderboardData');
+      leaderboardData = initializeLeaderboard(); // Reloads default data
+      saveLeaderboardData();
+      renderLeaderboard();
+      alert('Leaderboard has been reset.');
     }
 
     // Initialize leaderboard when page loads
     document.addEventListener('DOMContentLoaded', function() {
       renderLeaderboard();
+      
+      // Check for admin access
+      if (sessionStorage.getItem('isAdmin') === 'true') {
+        const titleSection = document.querySelector('.title-main').parentElement;
+        
+        const adminControls = document.createElement('div');
+        adminControls.className = 'mt-4 bg-red-50 border border-red-200 rounded-lg p-4';
+        adminControls.innerHTML = `
+          <h3 class="text-red-800 font-bold mb-2">Admin Controls</h3>
+          <button onclick="resetLeaderboard()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow transition-colors">
+            Reset Leaderboard Scores
+          </button>
+        `;
+        
+        // Insert after the title section
+        titleSection.appendChild(adminControls);
+      }
       
       // Add form submit handler
       const form = document.getElementById('uploadForm');

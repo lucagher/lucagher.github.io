@@ -232,11 +232,11 @@
   <script>
     // Team credentials for the competition
     const teamCredentials = {
-      'aau26_team1': { password: 'aau26_team1', teamName: 'Team 1' },
-      'aau26_team2': { password: 'aau26_team2', teamName: 'Team 2' },
-      'aau26_team3': { password: 'aau26_team3', teamName: 'Team 3' },
-      'aau26_team4': { password: 'aau26_team4', teamName: 'Team 4' },
-      'aau26_team5': { password: 'aau26_team5', teamName: 'Team 5' }
+      'aau26_team1': { password: 'P-valuepirates_ism1', teamName: 'P-value pirates' },
+      'aau26_team2': { password: 'TheRvengers_ism2', teamName: 'The Rvengers' },
+      'aau26_team3': { password: 'Outliers_ism3', teamName: 'Outliers' },
+      'aau26_team4': { password: 'Smoothoperators_ism4', teamName: 'Smooth operators' },
+      'aau26_team5': { password: 'Byteme_ism5', teamName: 'Byte me' }
     };
     
     // Multiple competition password system
@@ -308,11 +308,20 @@
       // Check if it matches competition password OR team credential
       if ((compData && password === compData.password) || validTeam) {
         console.log('Login successful!');
+        
         // Store team info in sessionStorage if it's a team login
         if (validTeam) {
           sessionStorage.setItem('teamId', validTeam.id);
           sessionStorage.setItem('teamName', validTeam.name);
+          sessionStorage.removeItem('isAdmin'); // Ensure not admin
           console.log('Team info stored:', validTeam);
+        } else {
+          // If it's a competition password (admin access)
+          if (password === 'AAU2025') {
+             sessionStorage.setItem('isAdmin', 'true');
+             sessionStorage.removeItem('teamId'); // Ensure no team ID
+             sessionStorage.removeItem('teamName');
+          }
         }
         window.location.href = compData.redirect;
       } else {
