@@ -570,7 +570,11 @@
       // Update user info display
       updateUserInfo();
       
+      // Force render leaderboard
       renderLeaderboard();
+      
+      // Also update user info after a short delay to ensure DOM is ready
+      setTimeout(updateUserInfo, 100);
       
       // Check for admin access and show reset button
       if (sessionStorage.getItem('isAdmin') === 'true') {
