@@ -7,14 +7,7 @@
 </head>
 <body>
     <h1>Test Team Login</h1>
-    <p>Try these passwords:</p>
-    <ul>
-        <li>P-valuepirates_ism1 (P-value pirates)</li>
-        <li>TheRvengers_ism2 (The Rvengers)</li>
-        <li>Outliers_ism3 (Outliers)</li>
-        <li>Smoothoperators_ism4 (Smooth operators)</li>
-        <li>Byteme_ism5 (Byte me)</li>
-    </ul>
+    <p>Enter a password to test login functionality.</p>
     
     <form onsubmit="event.preventDefault(); testLogin(); return false;">
         <input type="password" id="testPassword" placeholder="Enter password">
@@ -23,25 +16,32 @@
     
     <div id="result"></div>
 
+    <script src="assets/credential-hashes.js"></script>
     <script>
-        const teamCredentials = {
-            'aau26_team1': { password: 'P-valuepirates_ism1', teamName: 'P-value pirates' },
-            'aau26_team2': { password: 'TheRvengers_ism2', teamName: 'The Rvengers' },
-            'aau26_team3': { password: 'Outliers_ism3', teamName: 'Outliers' },
-            'aau26_team4': { password: 'Smoothoperators_ism4', teamName: 'Smooth operators' },
-            'aau26_team5': { password: 'Byteme_ism5', teamName: 'Byte me' }
-        };
+        // Compute SHA-256 hex digest
+        async function sha256Hex(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-        function testLogin() {
+        async function testLogin() {
             const password = document.getElementById('testPassword').value;
             const result = document.getElementById('result');
             
-            console.log('Testing password:', password);
+            if (!window.CREDENTIAL_HASHES) {
+                result.innerHTML = `<p style="color: orange;">Loading credentials...</p>`;
+                setTimeout(testLogin, 500);
+                return;
+            }
+
+            const enteredHash = await sha256Hex(password);
             
             let validTeam = null;
-            for (const [teamId, credentials] of Object.entries(teamCredentials)) {
-                console.log('Checking:', teamId, 'against:', credentials.password);
-                if (password === credentials.password) {
+            for (const [teamId, credentials] of Object.entries(window.CREDENTIAL_HASHES.teamCredentials)) {
+                if (enteredHash === credentials.passwordHash) {
                     validTeam = { id: teamId, name: credentials.teamName };
                     break;
                 }
@@ -49,10 +49,8 @@
             
             if (validTeam) {
                 result.innerHTML = `<p style="color: green;">SUCCESS! Team: ${validTeam.name} (${validTeam.id})</p>`;
-                console.log('Login successful for:', validTeam);
             } else {
-                result.innerHTML = `<p style="color: red;">FAILED! Password "${password}" not found</p>`;
-                console.log('Login failed for:', password);
+                result.innerHTML = `<p style="color: red;">FAILED! Password not found</p>`;
             }
         }
     </script>
