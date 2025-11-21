@@ -204,7 +204,14 @@
 
     <!-- Table -->
     <section class="card p-4 sm:p-6 lg:p-8">
-      <h2 class="title-section text-xl sm:text-2xl mb-4 sm:mb-6">Leaderboard</h2>
+      <div class="flex justify-between items-center mb-4 sm:mb-6">
+        <h2 class="title-section text-xl sm:text-2xl">Leaderboard</h2>
+        <div id="adminControls" style="display: none;">
+          <button onclick="resetLeaderboard()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow transition-colors text-sm font-medium">
+            🔄 Reset Scores
+          </button>
+        </div>
+      </div>
       <div class="overflow-x-auto">
         <table class="w-full min-w-[500px]" id="leaderboardTable">
           <thead>
@@ -225,21 +232,54 @@
   </main>
 
   <script>
+    // Team name mapping
+    const teamNames = {
+      'aau26_team1': 'P-value pirates',
+      'aau26_team2': 'The Rvengers',
+      'aau26_team3': 'Outliers',
+      'aau26_team4': 'Smooth operators',
+      'aau26_team5': 'Byte me'
+    };
+
     // Initialize leaderboard data from localStorage or use default data
     function initializeLeaderboard() {
       const storedData = localStorage.getItem('leaderboardData');
+      let data = [];
+      
       if (storedData) {
-        return JSON.parse(storedData);
+        data = JSON.parse(storedData);
+        // Update team names if they're outdated
+        data.forEach(entry => {
+          if (teamNames[entry.teamId]) {
+            entry.team = teamNames[entry.teamId];
+          }
+        });
+      } else {
+        // Default empty leaderboard for the 5 teams
+        data = [
+          { teamId: 'aau26_team1', team: 'P-value pirates', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+          { teamId: 'aau26_team2', team: 'The Rvengers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+          { teamId: 'aau26_team3', team: 'Outliers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+          { teamId: 'aau26_team4', team: 'Smooth operators', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+          { teamId: 'aau26_team5', team: 'Byte me', score: null, entries: 0, lastSubmission: 'No submissions yet' }
+        ];
       }
       
-      // Default empty leaderboard for the 5 teams
-      return [
-        { teamId: 'aau26_team1', team: 'P-value pirates', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team2', team: 'The Rvengers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team3', team: 'Outliers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team4', team: 'Smooth operators', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team5', team: 'Byte me', score: null, entries: 0, lastSubmission: 'No submissions yet' }
-      ];
+      // Ensure all 5 teams are present
+      const existingTeamIds = new Set(data.map(e => e.teamId));
+      Object.keys(teamNames).forEach(teamId => {
+        if (!existingTeamIds.has(teamId)) {
+          data.push({
+            teamId: teamId,
+            team: teamNames[teamId],
+            score: null,
+            entries: 0,
+            lastSubmission: 'No submissions yet'
+          });
+        }
+      });
+      
+      return data;
     }
     
     let leaderboardData = initializeLeaderboard();
@@ -435,23 +475,18 @@
 
     // Initialize leaderboard when page loads
     document.addEventListener('DOMContentLoaded', function() {
+      // Update team names in existing data and save
+      leaderboardData = initializeLeaderboard();
+      saveLeaderboardData();
+      
       renderLeaderboard();
       
-      // Check for admin access
+      // Check for admin access and show reset button
       if (sessionStorage.getItem('isAdmin') === 'true') {
-        const titleSection = document.querySelector('.title-main').parentElement;
-        
-        const adminControls = document.createElement('div');
-        adminControls.className = 'mt-4 bg-red-50 border border-red-200 rounded-lg p-4';
-        adminControls.innerHTML = `
-          <h3 class="text-red-800 font-bold mb-2">Admin Controls</h3>
-          <button onclick="resetLeaderboard()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow transition-colors">
-            Reset Leaderboard Scores
-          </button>
-        `;
-        
-        // Insert after the title section
-        titleSection.appendChild(adminControls);
+        const adminControls = document.getElementById('adminControls');
+        if (adminControls) {
+          adminControls.style.display = 'block';
+        }
       }
       
       // Add form submit handler
