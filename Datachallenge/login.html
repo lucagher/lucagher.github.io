@@ -240,7 +240,7 @@
       'aau26_team4': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team4?.passwordHash || ''), teamName: 'Smooth operators' },
       'aau26_team5': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team5?.passwordHash || ''), teamName: 'Byte me' }
     };
-
+    
     // Multiple competition password system (passwordHash injected at deploy-time)
     const competitions = {
       'renewable': {
@@ -288,9 +288,9 @@
       const password = document.getElementById('password').value;
       const competition = getCompetition();
       const compData = competitions[competition];
-
+      
       const enteredHash = await sha256Hex(password);
-
+      
       // Check team credentials by comparing hashes
       let validTeam = null;
       for (const [teamId, credentials] of Object.entries(teamCredentials)) {
@@ -299,7 +299,7 @@
           break;
         }
       }
-
+      
       // Check competition password by hash
       const isCompetitionPassword = compData && enteredHash === compData.passwordHash;
 
