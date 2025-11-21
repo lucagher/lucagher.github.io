@@ -158,16 +158,24 @@
         <h1 class="title-main text-2xl sm:text-3xl lg:text-4xl mb-4 font-bold" style="color: var(--aau-blue); font-family: 'Lato', sans-serif;">Competition Dashboard</h1>
         
         <!-- Back to Home Button -->
-        <div class="mt-4 sm:mt-6 flex gap-3">
-          <a href="../index.html" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Back to Home
-          </a>
-          <button onclick="logout()" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-900 rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
-            Logout
-          </button>
+        <div class="mt-4 sm:mt-6 flex flex-col gap-3">
+          <div class="flex gap-3">
+            <a href="../index.html" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              Back to Home
+            </a>
+            <button onclick="logout()" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-900 rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
+              Logout
+            </button>
+          </div>
+          <!-- User Info with Logo -->
+          <div id="userInfo" class="flex items-center gap-2 mt-2" style="display: none;">
+            <img id="userLogo" src="" alt="Team Logo" class="w-8 h-8 rounded-full object-cover border-2 border-[var(--aau-blue)]" style="display: none;">
+            <span id="userName" class="text-sm font-medium text-gray-700"></span>
+            <button onclick="changeTeamLogo()" class="ml-2 text-xs text-[var(--aau-blue)] hover:underline">Change Logo</button>
+          </div>
         </div>
       </div>
       
@@ -311,6 +319,76 @@
       return time;
     }
 
+    // Function to get team logo
+    function getTeamLogo(teamId) {
+      const logos = JSON.parse(localStorage.getItem('teamLogos') || '{}');
+      return logos[teamId] || null;
+    }
+
+    // Function to save team logo
+    function saveTeamLogo(teamId, logoData) {
+      const logos = JSON.parse(localStorage.getItem('teamLogos') || '{}');
+      logos[teamId] = logoData;
+      localStorage.setItem('teamLogos', JSON.stringify(logos));
+    }
+
+    // Function to change team logo
+    function changeTeamLogo() {
+      const currentTeamId = sessionStorage.getItem('teamId');
+      if (!currentTeamId) {
+        alert('Please log in to change your team logo!');
+        return;
+      }
+
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+          alert('Image size must be less than 2MB');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const logoData = e.target.result;
+          saveTeamLogo(currentTeamId, logoData);
+          updateUserInfo();
+          renderLeaderboard();
+          alert('Logo updated successfully!');
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    }
+
+    // Function to update user info display
+    function updateUserInfo() {
+      const currentTeamId = sessionStorage.getItem('teamId');
+      const currentTeamName = sessionStorage.getItem('teamName');
+      const userInfo = document.getElementById('userInfo');
+      const userName = document.getElementById('userName');
+      const userLogo = document.getElementById('userLogo');
+
+      if (currentTeamId && currentTeamName) {
+        userInfo.style.display = 'flex';
+        userName.textContent = currentTeamName;
+        
+        const logo = getTeamLogo(currentTeamId);
+        if (logo) {
+          userLogo.src = logo;
+          userLogo.style.display = 'block';
+        } else {
+          userLogo.style.display = 'none';
+        }
+      } else {
+        userInfo.style.display = 'none';
+      }
+    }
+
     // Function to render leaderboard
     function renderLeaderboard() {
       const sortedData = sortLeaderboard([...leaderboardData]);
@@ -322,10 +400,20 @@
         const rowClass = isCurrentTeam ? 'table-row bg-blue-50 font-semibold' : 'table-row';
         const teamCellClass = isCurrentTeam ? 'px-3 sm:px-6 py-3 sm:py-4 font-medium text-[var(--aau-blue)]' : 'px-3 sm:px-6 py-3 sm:py-4 font-medium';
         
+        const teamLogo = getTeamLogo(entry.teamId);
+        const logoHtml = teamLogo 
+          ? `<img src="${teamLogo}" alt="${entry.team} logo" class="w-6 h-6 rounded-full object-cover inline-block mr-2 border border-gray-300">`
+          : `<div class="w-6 h-6 rounded-full bg-gray-200 inline-block mr-2 flex items-center justify-center text-xs text-gray-500">${entry.team.charAt(0)}</div>`;
+        
         return `
           <tr class="${rowClass}">
             <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-base sm:text-lg font-semibold text-[var(--aau-blue)]">${index + 1}</td>
-            <td class="${teamCellClass}">${entry.team}${isCurrentTeam ? ' <span class="text-xs">(You)</span>' : ''}</td>
+            <td class="${teamCellClass}">
+              <div class="flex items-center">
+                ${logoHtml}
+                <span>${entry.team}${isCurrentTeam ? ' <span class="text-xs">(You)</span>' : ''}</span>
+              </div>
+            </td>
             <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono">${formatScore(entry.score)}</td>
             <td class="px-3 sm:px-6 py-3 sm:py-4 font-mono text-sm">${entry.entries}</td>
             <td class="px-3 sm:px-6 py-3 sm:py-4 text-sm text-gray-600">${formatLastSubmission(entry.lastSubmission)}</td>
@@ -478,6 +566,9 @@
       // Update team names in existing data and save
       leaderboardData = initializeLeaderboard();
       saveLeaderboardData();
+      
+      // Update user info display
+      updateUserInfo();
       
       renderLeaderboard();
       
