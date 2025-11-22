@@ -479,16 +479,48 @@
           const csvContent = e.target.result;
           const predictions = parseCSV(csvContent);
           
-          // Load actual values (in a real app, this would come from server)
-          const actualValues = [0.3, 1, 3, -1]; // Your actual values
+          // Calculate RMSE using serverless endpoint (if available) or fallback
+          // IMPORTANT: Replace RMSE_ENDPOINT_URL with your Cloudflare Worker URL after deployment
+          const RMSE_ENDPOINT_URL = null; // Set to your Cloudflare Worker URL, e.g., 'https://rmse-calculator.YOUR_SUBDOMAIN.workers.dev'
           
-          if (predictions.length !== actualValues.length) {
-            alert(`Error: Your predictions must have ${actualValues.length} values, but you provided ${predictions.length}.`);
-            return;
+          let rmse;
+          
+          if (RMSE_ENDPOINT_URL) {
+            // Use serverless endpoint (secure - actual values never exposed)
+            try {
+              const response = await fetch(RMSE_ENDPOINT_URL, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ predictions: predictions }),
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Error: ${errorData.error || 'Failed to calculate RMSE'}`);
+                return;
+              }
+
+              const result = await response.json();
+              rmse = result.rmse;
+            } catch (error) {
+              alert('Error connecting to RMSE calculator. Please try again later.');
+              return;
+            }
+          } else {
+            // TEMPORARY FALLBACK: Remove this once Cloudflare Worker is deployed
+            // This exposes actual values - only for development/testing
+            console.warn('WARNING: Using fallback RMSE calculation. Deploy Cloudflare Worker for production!');
+            const actualValues = [0.3, 1, 3, -1]; // TEMPORARY - Remove after deploying worker
+            
+            if (predictions.length !== actualValues.length) {
+              alert(`Error: Your predictions must have ${actualValues.length} values, but you provided ${predictions.length}.`);
+              return;
+            }
+            
+            rmse = calculateRMSE(actualValues, predictions);
           }
-          
-          // Calculate RMSE
-          const rmse = calculateRMSE(actualValues, predictions);
           
           // Find the team in the leaderboard
           let teamEntry = leaderboardData.find(entry => entry.teamId === currentTeamId);

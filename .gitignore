@@ -4,6 +4,10 @@
 # Generated credential hashes for client
 Datachallenge/assets/credential-hashes.js
 
+# Actual values (should never be committed or exposed)
+Datachallenge/assets/actual.csv
+**/actual.csv
+
 # Node artifacts (if you use the generator script)
 node_modules
 package-lock.json
