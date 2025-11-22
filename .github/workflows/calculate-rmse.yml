@@ -58,26 +58,39 @@ jobs:
           import sys
           import os
           
+          # Get and validate ACTUAL_VALUES
           actual_str = os.environ.get('ACTUAL_VALUES', '').strip()
           if not actual_str:
-              print("Error: ACTUAL_VALUES is empty or not set", file=sys.stderr)
+              print("Error: ACTUAL_VALUES secret is empty or not set", file=sys.stderr)
+              print("Please configure ACTUAL_VALUES in GitHub Secrets (Settings -> Secrets -> Actions)", file=sys.stderr)
               sys.exit(1)
           
-          # Parse actual values, filtering out empty strings
+          # Parse actual values with robust error handling
           actual = []
-          for x in actual_str.split(','):
-              x_clean = x.strip()
-              if x_clean:
-                  try:
-                      actual.append(float(x_clean))
-                  except ValueError:
-                      print(f"Error: Could not convert '{x_clean}' to float", file=sys.stderr)
-                      sys.exit(1)
+          try:
+              for x in actual_str.split(','):
+                  x_clean = x.strip()
+                  if x_clean:  # Skip empty strings (from trailing commas, etc.)
+                      try:
+                          val = float(x_clean)
+                          actual.append(val)
+                      except ValueError as e:
+                          print(f"Error: Could not convert '{x_clean}' to float: {e}", file=sys.stderr)
+                          print(f"ACTUAL_VALUES should be comma-separated numbers like: 0.3,1,3,-1", file=sys.stderr)
+                          sys.exit(1)
+          except Exception as e:
+              print(f"Error: Failed to parse ACTUAL_VALUES: {e}", file=sys.stderr)
+              sys.exit(1)
           
           if len(actual) == 0:
-              print("Error: No valid actual values found", file=sys.stderr)
+              print("Error: No valid actual values found after parsing", file=sys.stderr)
+              print(f"ACTUAL_VALUES received: '{actual_str}'", file=sys.stderr)
+              print("Expected format: comma-separated numbers like '0.3,1,3,-1'", file=sys.stderr)
               sys.exit(1)
           
+          print(f"Successfully parsed {len(actual)} actual values", file=sys.stderr)
+          
+          # Get and validate PREDICTIONS
           predictions_str = os.environ.get('PREDICTIONS', '').strip()
           if not predictions_str:
               print("Error: PREDICTIONS is empty", file=sys.stderr)
@@ -87,31 +100,53 @@ jobs:
               predictions = json.loads(predictions_str)
           except json.JSONDecodeError as e:
               print(f"Error: Invalid JSON in predictions: {e}", file=sys.stderr)
+              print(f"PREDICTIONS received: '{predictions_str}'", file=sys.stderr)
               sys.exit(1)
           
           if not isinstance(predictions, list):
-              print("Error: Predictions must be a list", file=sys.stderr)
+              print(f"Error: Predictions must be a list, got {type(predictions)}", file=sys.stderr)
+              sys.exit(1)
+          
+          if len(predictions) == 0:
+              print("Error: Predictions list is empty", file=sys.stderr)
+              sys.exit(1)
+          
+          # Validate all predictions are numbers
+          try:
+              predictions = [float(p) for p in predictions]
+          except (ValueError, TypeError) as e:
+              print(f"Error: All predictions must be numbers: {e}", file=sys.stderr)
               sys.exit(1)
           
           if len(predictions) != len(actual):
-              print(f"Error: predictions length {len(predictions)} != actual length {len(actual)}", file=sys.stderr)
-              print(f"Actual values: {actual}", file=sys.stderr)
-              print(f"Predictions: {predictions}", file=sys.stderr)
+              print(f"Error: predictions length ({len(predictions)}) != actual length ({len(actual)})", file=sys.stderr)
+              print(f"Actual values ({len(actual)}): {actual}", file=sys.stderr)
+              print(f"Predictions ({len(predictions)}): {predictions}", file=sys.stderr)
               sys.exit(1)
           
-          sum_squared_errors = sum((actual[i] - predictions[i]) ** 2 for i in range(len(actual)))
-          mse = sum_squared_errors / len(actual)
-          rmse = math.sqrt(mse)
+          # Calculate RMSE
+          try:
+              sum_squared_errors = sum((actual[i] - predictions[i]) ** 2 for i in range(len(actual)))
+              mse = sum_squared_errors / len(actual)
+              rmse = math.sqrt(mse)
+          except Exception as e:
+              print(f"Error calculating RMSE: {e}", file=sys.stderr)
+              sys.exit(1)
           
-          # Output RMSE value for GitHub Actions (both stdout and GITHUB_OUTPUT)
+          # Output RMSE value for GitHub Actions
           rmse_str = f"{rmse:.6f}"
           print(f"RMSE={rmse_str}")
           
           # Write to GITHUB_OUTPUT if available
           github_output = os.environ.get('GITHUB_OUTPUT')
           if github_output:
-              with open(github_output, 'a') as f:
-                  f.write(f"rmse={rmse_str}\n")
+              try:
+                  with open(github_output, 'a') as f:
+                      f.write(f"rmse={rmse_str}\n")
+              except Exception as e:
+                  print(f"Warning: Could not write to GITHUB_OUTPUT: {e}", file=sys.stderr)
+          
+          print(f"RMSE calculated successfully: {rmse_str}", file=sys.stderr)
           PYTHON_SCRIPT
         env:
           ACTUAL_VALUES: ${{ secrets.ACTUAL_VALUES }}
