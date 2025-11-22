@@ -13,7 +13,7 @@ Abbiamo creato un sistema a due componenti:
 1. Vai su GitHub → Repository → **Settings** → **Secrets and variables** → **Actions**
 2. Aggiungi questi secrets:
    - `ACTUAL_VALUES` = `0.3,1,3,-1` (i tuoi valori actual)
-   - `GITHUB_TOKEN` = (un Personal Access Token con permessi `repo`)
+   - `TOKEN_SECRET` = (un Personal Access Token con permessi `repo`)
 
 **Per creare GITHUB_TOKEN:**
 - GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
@@ -41,7 +41,7 @@ Abbiamo creato un sistema a due componenti:
 4. Imposta i secrets in Cloudflare Dashboard:
    - Workers & Pages → github-proxy → Settings → Variables
    - Aggiungi secrets:
-     - `GITHUB_TOKEN` = (il token che hai creato al Passo 1)
+     - `GITHUB_TOKEN` = (lo stesso token che hai messo in TOKEN_SECRET su GitHub)
      - `REPO_OWNER` = `lucagher` (opzionale, default)
      - `REPO_NAME` = `lucagher.github.io` (opzionale, default)
 
