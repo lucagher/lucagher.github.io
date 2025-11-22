@@ -1,0 +1,151 @@
+name: Calculate RMSE for Submissions
+
+on:
+  repository_dispatch:
+    types: [calculate-rmse]
+  workflow_dispatch:
+    inputs:
+      team_id:
+        description: 'Team ID'
+        required: true
+        type: string
+      predictions_json:
+        description: 'Predictions as JSON array'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  calculate-rmse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Parse inputs
+        id: parse
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            TEAM_ID="${{ github.event.inputs.team_id }}"
+            PREDICTIONS='${{ github.event.inputs.predictions_json }}'
+          else
+            TEAM_ID="${{ github.event.client_payload.team_id }}"
+            PREDICTIONS='${{ github.event.client_payload.predictions_json }}'
+          fi
+          
+          echo "team_id=${TEAM_ID}" >> $GITHUB_OUTPUT
+          echo "predictions=${PREDICTIONS}" >> $GITHUB_OUTPUT
+
+      - name: Calculate RMSE
+        id: rmse
+        run: |
+          # Get actual values from GitHub Secret
+          ACTUAL_VALUES="${{ secrets.ACTUAL_VALUES }}"
+          
+          # Parse predictions from JSON
+          PREDICTIONS='${{ steps.parse.outputs.predictions }}'
+          
+          # Calculate RMSE using Python
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import math
+          import sys
+          import os
+          
+          actual_str = os.environ.get('ACTUAL_VALUES', '')
+          actual = [float(x.strip()) for x in actual_str.split(',') if x.strip()]
+          
+          predictions_str = os.environ.get('PREDICTIONS', '')
+          predictions = json.loads(predictions_str)
+          
+          if len(predictions) != len(actual):
+              print(f"Error: predictions length {len(predictions)} != actual length {len(actual)}", file=sys.stderr)
+              sys.exit(1)
+          
+          sum_squared_errors = sum((actual[i] - predictions[i]) ** 2 for i in range(len(actual)))
+          mse = sum_squared_errors / len(actual)
+          rmse = math.sqrt(mse)
+          
+          print(f"RMSE={rmse:.6f}")
+          PYTHON_SCRIPT
+        env:
+          ACTUAL_VALUES: ${{ secrets.ACTUAL_VALUES }}
+          PREDICTIONS: ${{ steps.parse.outputs.predictions }}
+
+      - name: Update leaderboard data
+        run: |
+          TEAM_ID='${{ steps.parse.outputs.team_id }}'
+          RMSE=$(grep "^RMSE=" <<< "${{ steps.rmse.outputs.rmse }}" | cut -d'=' -f2)
+          
+          # Create leaderboard data directory if it doesn't exist
+          mkdir -p Datachallenge/assets
+          
+          # Read existing leaderboard data or create new
+          if [ -f "Datachallenge/assets/leaderboard-data.json" ]; then
+            python3 << 'PYTHON_SCRIPT'
+          import json
+          import sys
+          import os
+          
+          team_id = os.environ.get('TEAM_ID')
+          rmse = float(os.environ.get('RMSE'))
+          
+          try:
+              with open('Datachallenge/assets/leaderboard-data.json', 'r') as f:
+                  data = json.load(f)
+          except:
+              data = {}
+          
+          if team_id not in data:
+              data[team_id] = {
+                  'score': None,
+                  'entries': 0,
+                  'lastSubmission': None
+              }
+          
+          data[team_id]['score'] = rmse
+          data[team_id]['entries'] = data[team_id].get('entries', 0) + 1
+          from datetime import datetime
+          data[team_id]['lastSubmission'] = datetime.now().isoformat()
+          
+          with open('Datachallenge/assets/leaderboard-data.json', 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"Updated {team_id} with RMSE: {rmse}")
+          PYTHON_SCRIPT
+          else
+            python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          from datetime import datetime
+          
+          team_id = os.environ.get('TEAM_ID')
+          rmse = float(os.environ.get('RMSE'))
+          
+          data = {
+              team_id: {
+                  'score': rmse,
+                  'entries': 1,
+                  'lastSubmission': datetime.now().isoformat()
+              }
+          }
+          
+          with open('Datachallenge/assets/leaderboard-data.json', 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"Created new entry for {team_id} with RMSE: {rmse}")
+          PYTHON_SCRIPT
+          fi
+        env:
+          TEAM_ID: ${{ steps.parse.outputs.team_id }}
+          RMSE: $(grep "^RMSE=" <<< "${{ steps.rmse.outputs.rmse }}" | cut -d'=' -f2)
+
+      - name: Commit and push leaderboard update
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Datachallenge/assets/leaderboard-data.json
+          git diff --staged --quiet || git commit -m "Update leaderboard: ${{ steps.parse.outputs.team_id }}"
+          git push
