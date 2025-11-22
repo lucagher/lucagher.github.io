@@ -109,10 +109,30 @@ jobs:
           ACTUAL_VALUES: ${{ secrets.ACTUAL_VALUES }}
           PREDICTIONS: ${{ steps.parse.outputs.predictions }}
 
+      - name: Extract RMSE value
+        id: extract_rmse
+        run: |
+          RMSE_OUTPUT="${{ steps.rmse.outputs.rmse }}"
+          # Extract RMSE value from output (format: RMSE=0.123456)
+          RMSE_VALUE=$(echo "$RMSE_OUTPUT" | grep "^RMSE=" | cut -d'=' -f2)
+          if [ -z "$RMSE_VALUE" ]; then
+            # Try to extract from stdout if output format is different
+            RMSE_VALUE=$(echo "$RMSE_OUTPUT" | tail -1 | grep -oE '[0-9]+\.[0-9]+' | head -1)
+          fi
+          echo "RMSE_VALUE=${RMSE_VALUE}" >> $GITHUB_OUTPUT
+          echo "Extracted RMSE: ${RMSE_VALUE}"
+
       - name: Update leaderboard data
         run: |
           TEAM_ID='${{ steps.parse.outputs.team_id }}'
-          RMSE=$(grep "^RMSE=" <<< "${{ steps.rmse.outputs.rmse }}" | cut -d'=' -f2)
+          RMSE='${{ steps.extract_rmse.outputs.RMSE_VALUE }}'
+          
+          if [ -z "$RMSE" ] || [ "$RMSE" = "" ]; then
+            echo "Error: RMSE value is empty"
+            exit 1
+          fi
+          
+          echo "Updating leaderboard for team: $TEAM_ID with RMSE: $RMSE"
           
           # Create leaderboard data directory if it doesn't exist
           mkdir -p Datachallenge/assets
@@ -175,7 +195,7 @@ jobs:
           fi
         env:
           TEAM_ID: ${{ steps.parse.outputs.team_id }}
-          RMSE: $(grep "^RMSE=" <<< "${{ steps.rmse.outputs.rmse }}" | cut -d'=' -f2)
+          RMSE: ${{ steps.extract_rmse.outputs.RMSE_VALUE }}
 
       - name: Commit and push leaderboard update
         run: |
