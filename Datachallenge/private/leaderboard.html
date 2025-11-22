@@ -420,9 +420,9 @@
       submitButton.textContent = 'Submitting...';
       
       try {
-        // Use proxy endpoint (Cloudflare Worker) to trigger GitHub Actions
-        // The proxy stores the GitHub token server-side, so it's never exposed
-        const PROXY_ENDPOINT = null; // Set to your Cloudflare Worker URL, e.g., 'https://github-proxy.YOUR_SUBDOMAIN.workers.dev'
+          // Use proxy endpoint (Cloudflare Worker) to trigger GitHub Actions
+          // The proxy stores the GitHub token server-side, so it's never exposed
+          const PROXY_ENDPOINT = 'https://github-proxy.luca-gherardini.workers.dev';
         
         if (!PROXY_ENDPOINT) {
           // Fallback: Show message that integration needs to be configured
