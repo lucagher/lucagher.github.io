@@ -152,22 +152,10 @@ jobs:
           ACTUAL_VALUES: ${{ secrets.ACTUAL_VALUES }}
           PREDICTIONS: ${{ steps.parse.outputs.predictions }}
 
-      - name: Extract RMSE value
-        id: extract_rmse
-        run: |
-          # Get RMSE from the previous step's output
-          RMSE_VALUE="${{ steps.rmse.outputs.rmse }}"
-          if [ -z "$RMSE_VALUE" ]; then
-            echo "Error: RMSE output is empty"
-            exit 1
-          fi
-          echo "RMSE from step: ${RMSE_VALUE}"
-          echo "rmse=${RMSE_VALUE}" >> $GITHUB_OUTPUT
-
       - name: Update leaderboard data
         run: |
           TEAM_ID='${{ steps.parse.outputs.team_id }}'
-          RMSE='${{ steps.extract_rmse.outputs.RMSE_VALUE }}'
+          RMSE='${{ steps.rmse.outputs.rmse }}'
           
           if [ -z "$RMSE" ] || [ "$RMSE" = "" ]; then
             echo "Error: RMSE value is empty"
