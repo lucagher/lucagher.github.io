@@ -36,65 +36,65 @@ jobs:
       - name: Parse inputs
         id: parse
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TEAM_ID="${{ github.event.inputs.team_id }}"
             PREDICTIONS='${{ github.event.inputs.predictions_json }}'
           else
             TEAM_ID="${{ github.event.client_payload.team_id }}"
             PREDICTIONS='${{ github.event.client_payload.predictions_json }}'
           fi
-          
+
+          # Base64-encode predictions to avoid quoting / newline issues when passing via outputs
+          PREDICTIONS_B64=$(printf '%s' "$PREDICTIONS" | base64 | tr -d '\n')
+
           echo "team_id=${TEAM_ID}" >> $GITHUB_OUTPUT
-          echo "predictions=${PREDICTIONS}" >> $GITHUB_OUTPUT
+          echo "predictions_b64=${PREDICTIONS_B64}" >> $GITHUB_OUTPUT
 
       - name: Calculate RMSE
         id: rmse
         run: |
-          # ACTUAL_VALUES and PREDICTIONS are set via env section below
-          # Debug: Show what we're working with (without exposing secrets)
+          # Load actual values (secret) and decode predictions
+          ACTUAL_VALUES="${{ secrets.ACTUAL_VALUES }}"
+          PREDICTIONS_B64="${{ steps.parse.outputs.predictions_b64 }}"
+
+          if [ -z "$PREDICTIONS_B64" ]; then
+            echo "Error: predictions missing from inputs" >&2
+            exit 1
+          fi
+
+          # decode predictions safely
+          export PREDICTIONS=$(echo "$PREDICTIONS_B64" | base64 --decode 2>/dev/null) || {
+            echo "Error: failed to decode predictions_b64" >&2
+            exit 1
+          }
+
+          # Debug info (do not print secrets)
           echo "Actual values count: $(echo "$ACTUAL_VALUES" | tr ',' '\n' | grep -c .)"
-          echo "Predictions: $PREDICTIONS"
           
-          # Calculate RMSE using Python
-          python3 << 'PYTHON_SCRIPT'
-          import json
-          import math
-          import sys
-          import os
+          # Run Python to compute RMSE; it will print only the numeric RMSE to stdout
+          RMSE=$(python3 - <<'PY'
+          import json, math, os, sys
           
-          # Get and validate ACTUAL_VALUES
           actual_str = os.environ.get('ACTUAL_VALUES', '').strip()
           if not actual_str:
               print("Error: ACTUAL_VALUES secret is empty or not set", file=sys.stderr)
-              print("Please configure ACTUAL_VALUES in GitHub Secrets (Settings -> Secrets -> Actions)", file=sys.stderr)
               sys.exit(1)
           
-          # Parse actual values with robust error handling
+          # parse actual
           actual = []
           try:
               for x in actual_str.split(','):
                   x_clean = x.strip()
-                  if x_clean:  # Skip empty strings (from trailing commas, etc.)
-                      try:
-                          val = float(x_clean)
-                          actual.append(val)
-                      except ValueError as e:
-                          print(f"Error: Could not convert '{x_clean}' to float: {e}", file=sys.stderr)
-                          print(f"ACTUAL_VALUES should be comma-separated numbers like: 0.3,1,3,-1", file=sys.stderr)
-                          sys.exit(1)
+                  if x_clean:
+                      actual.append(float(x_clean))
           except Exception as e:
-              print(f"Error: Failed to parse ACTUAL_VALUES: {e}", file=sys.stderr)
+              print(f"Error parsing ACTUAL_VALUES: {e}", file=sys.stderr)
               sys.exit(1)
           
           if len(actual) == 0:
-              print("Error: No valid actual values found after parsing", file=sys.stderr)
-              print(f"ACTUAL_VALUES received: '{actual_str}'", file=sys.stderr)
-              print("Expected format: comma-separated numbers like '0.3,1,3,-1'", file=sys.stderr)
+              print("Error: No valid actual values found", file=sys.stderr)
               sys.exit(1)
           
-          print(f"Successfully parsed {len(actual)} actual values", file=sys.stderr)
-          
-          # Get and validate PREDICTIONS
           predictions_str = os.environ.get('PREDICTIONS', '').strip()
           if not predictions_str:
               print("Error: PREDICTIONS is empty", file=sys.stderr)
@@ -103,8 +103,7 @@ jobs:
           try:
               predictions = json.loads(predictions_str)
           except json.JSONDecodeError as e:
-              print(f"Error: Invalid JSON in predictions: {e}", file=sys.stderr)
-              print(f"PREDICTIONS received: '{predictions_str}'", file=sys.stderr)
+              print(f"Error: Invalid JSON in PREDICTIONS: {e}", file=sys.stderr)
               sys.exit(1)
           
           if not isinstance(predictions, list):
@@ -115,114 +114,79 @@ jobs:
               print("Error: Predictions list is empty", file=sys.stderr)
               sys.exit(1)
           
-          # Validate all predictions are numbers
           try:
               predictions = [float(p) for p in predictions]
-          except (ValueError, TypeError) as e:
-              print(f"Error: All predictions must be numbers: {e}", file=sys.stderr)
+          except Exception as e:
+              print(f"Error converting predictions to floats: {e}", file=sys.stderr)
               sys.exit(1)
           
           if len(predictions) != len(actual):
-              print(f"Error: predictions length ({len(predictions)}) != actual length ({len(actual)})", file=sys.stderr)
-              print(f"Actual values ({len(actual)}): {actual}", file=sys.stderr)
-              print(f"Predictions ({len(predictions)}): {predictions}", file=sys.stderr)
+              print(f"Error: length mismatch predictions({len(predictions)}) vs actual({len(actual)})", file=sys.stderr)
               sys.exit(1)
           
-          # Calculate RMSE
           try:
-              sum_squared_errors = sum((actual[i] - predictions[i]) ** 2 for i in range(len(actual)))
-              mse = sum_squared_errors / len(actual)
+              mse = sum((a - p) ** 2 for a, p in zip(actual, predictions)) / len(actual)
               rmse = math.sqrt(mse)
           except Exception as e:
               print(f"Error calculating RMSE: {e}", file=sys.stderr)
               sys.exit(1)
           
-          # Output RMSE value for GitHub Actions
-          rmse_str = f"{rmse:.6f}"
-          print(f"RMSE={rmse_str}")
+          # Print only the numeric RMSE to stdout (6 decimal places)
+          print(f"{rmse:.6f}")
+          PY
+          )
           
-          # Write to GITHUB_OUTPUT if available
-          github_output = os.environ.get('GITHUB_OUTPUT')
-          if github_output:
-              try:
-                  with open(github_output, 'a') as f:
-                      f.write(f"rmse={rmse_str}\n")
-              except Exception as e:
-                  print(f"Warning: Could not write to GITHUB_OUTPUT: {e}", file=sys.stderr)
-          
-          print(f"RMSE calculated successfully: {rmse_str}", file=sys.stderr)
-          PYTHON_SCRIPT
-        env:
-          ACTUAL_VALUES: ${{ secrets.ACTUAL_VALUES }}
-          PREDICTIONS: ${{ steps.parse.outputs.predictions }}
-
-      - name: Extract RMSE value
-        id: extract_rmse
-        run: |
-          # Get RMSE from the previous step's output
-          RMSE_VALUE="${{ steps.rmse.outputs.rmse }}"
-          if [ -z "$RMSE_VALUE" ]; then
-            echo "Error: RMSE output is empty"
+          # Validate RMSE captured
+          if [ -z "$RMSE" ]; then
+            echo "Error: RMSE computation produced no output" >&2
             exit 1
           fi
-          echo "RMSE from step: ${RMSE_VALUE}"
-          echo "rmse=${RMSE_VALUE}" >> $GITHUB_OUTPUT
+          
+          # Write step output
+          echo "rmse=$RMSE" >> $GITHUB_OUTPUT
+        env:
+          ACTUAL_VALUES: ${{ secrets.ACTUAL_VALUES }}
 
       - name: Update leaderboard data
         run: |
-          # TEAM_ID and RMSE are already set via env section below
-          if [ -z "$RMSE" ] || [ "$RMSE" = "" ]; then
+          TEAM_ID='${{ steps.parse.outputs.team_id }}'
+          RMSE='${{ steps.rmse.outputs.rmse }}'
+
+          if [ -z "$RMSE" ]; then
             echo "Error: RMSE value is empty"
             exit 1
           fi
-          
+
           echo "Updating leaderboard for team: $TEAM_ID with RMSE: $RMSE"
-          
-          # Create leaderboard data directory if it doesn't exist
+
           mkdir -p Datachallenge/assets
-          
-          # Read existing leaderboard data or create new
+
           if [ -f "Datachallenge/assets/leaderboard-data.json" ]; then
-            python3 << 'PYTHON_SCRIPT'
-          import json
-          import sys
-          import os
-          
+            python3 <<'PY'
+          import json, os
+          from datetime import datetime
           team_id = os.environ.get('TEAM_ID')
           rmse = float(os.environ.get('RMSE'))
-          
           try:
               with open('Datachallenge/assets/leaderboard-data.json', 'r') as f:
                   data = json.load(f)
-          except:
+          except Exception:
               data = {}
-          
           if team_id not in data:
-              data[team_id] = {
-                  'score': None,
-                  'entries': 0,
-                  'lastSubmission': None
-              }
-          
+              data[team_id] = {'score': None, 'entries': 0, 'lastSubmission': None}
           data[team_id]['score'] = rmse
           data[team_id]['entries'] = data[team_id].get('entries', 0) + 1
-          from datetime import datetime
           data[team_id]['lastSubmission'] = datetime.now().isoformat()
-          
           with open('Datachallenge/assets/leaderboard-data.json', 'w') as f:
               json.dump(data, f, indent=2)
-          
           print(f"Updated {team_id} with RMSE: {rmse}")
-          PYTHON_SCRIPT
+          PY
           else
-            python3 << 'PYTHON_SCRIPT'
-          import json
-          import os
+            python3 <<'PY'
+          import json, os
           from datetime import datetime
-          
           team_id = os.environ.get('TEAM_ID')
           rmse = float(os.environ.get('RMSE'))
-          
           data = {
               team_id: {
                   'score': rmse,
@@ -230,12 +194,10 @@ jobs:
                   'lastSubmission': datetime.now().isoformat()
               }
           }
-          
           with open('Datachallenge/assets/leaderboard-data.json', 'w') as f:
               json.dump(data, f, indent=2)
-          
           print(f"Created new entry for {team_id} with RMSE: {rmse}")
-          PYTHON_SCRIPT
+          PY
           fi
         env:
           TEAM_ID: ${{ steps.parse.outputs.team_id }}
