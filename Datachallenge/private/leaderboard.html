@@ -259,40 +259,26 @@
 
     // Initialize leaderboard data from localStorage or use default data
     function initializeLeaderboard() {
-      // Default empty leaderboard for the 5 teams
-      const defaultData = [
-        { teamId: 'aau26_team1', team: 'P-value pirates', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team2', team: 'The Rvengers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team3', team: 'Outliers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team4', team: 'Smooth operators', score: null, entries: 0, lastSubmission: 'No submissions yet' },
-        { teamId: 'aau26_team5', team: 'Byte me', score: null, entries: 0, lastSubmission: 'No submissions yet' }
-      ];
-      
+      const storedData = localStorage.getItem('leaderboardData');
       let data = [];
       
-      try {
-        const storedData = localStorage.getItem('leaderboardData');
-        if (storedData) {
-          data = JSON.parse(storedData);
-          // Ensure data is an array
-          if (!Array.isArray(data)) {
-            data = [];
+      if (storedData) {
+        data = JSON.parse(storedData);
+        // Update team names if they're outdated
+        data.forEach(entry => {
+          if (teamNames[entry.teamId]) {
+            entry.team = teamNames[entry.teamId];
           }
-          // Update team names if they're outdated
-          data.forEach(entry => {
-            if (teamNames[entry.teamId]) {
-              entry.team = teamNames[entry.teamId];
-            }
-          });
-        }
-      } catch (error) {
-        console.warn('Error loading leaderboard from localStorage:', error);
-        data = [];
-      }
-      
-      // If no data or empty array, use default
-      if (!data || data.length === 0) {
-        data = [...defaultData];
+        });
+      } else {
+      // Default empty leaderboard for the 5 teams
+        data = [
+          { teamId: 'aau26_team1', team: 'P-value pirates', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+          { teamId: 'aau26_team2', team: 'The Rvengers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+          { teamId: 'aau26_team3', team: 'Outliers', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+          { teamId: 'aau26_team4', team: 'Smooth operators', score: null, entries: 0, lastSubmission: 'No submissions yet' },
+          { teamId: 'aau26_team5', team: 'Byte me', score: null, entries: 0, lastSubmission: 'No submissions yet' }
+      ];
       }
       
       // Ensure all 5 teams are present
@@ -312,7 +298,6 @@
       return data;
     }
     
-    // Initialize leaderboard data
     let leaderboardData = initializeLeaderboard();
 
     // Function to sort data by score (ascending - lower is better)
@@ -367,14 +352,14 @@
       const newEmoji = prompt('Enter a new emoji for your team:', currentEmoji);
       
       if (newEmoji && newEmoji.trim()) {
-        const cleaned = newEmoji.trim();
-        // Accept short strings (common emojis are 1–3 glyphs; allow up to 6 chars incl. ZWJ/VS)
-        if (cleaned.length <= 6) {
-          saveTeamEmoji(currentTeamId, cleaned);
+        // Validate that it's mostly emoji characters
+        const emojiRegex = /^[\p{Emoji}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}\p{Emoji_Modifier}\p{Emoji_Component}]+$/u;
+        if (emojiRegex.test(newEmoji.trim()) || newEmoji.length <= 3) {
+          saveTeamEmoji(currentTeamId, newEmoji.trim());
           updateUserInfo();
           renderLeaderboard();
         } else {
-          alert('Please enter a short emoji or symbol (max 6 characters).');
+          alert('Please enter a valid emoji!');
         }
       }
     }
@@ -396,50 +381,11 @@
       }
     }
 
-    // Function to calculate RMSE locally (fallback only)
-    function calculateRMSE(actual, predictions) {
-      if (actual.length !== predictions.length) {
-        throw new Error('Actual values and predictions must have the same length');
-      }
-      
-      let sumSquaredErrors = 0;
-      for (let i = 0; i < actual.length; i++) {
-        const error = actual[i] - predictions[i];
-        sumSquaredErrors += error * error;
-      }
-      
-      const mse = sumSquaredErrors / actual.length;
-      return Math.sqrt(mse);
-    }
-
     // Function to render leaderboard
     function renderLeaderboard() {
+      const sortedData = sortLeaderboard([...leaderboardData]);
       const tbody = document.getElementById('leaderboardBody');
       const currentTeamId = sessionStorage.getItem('teamId');
-      
-      if (!tbody) {
-        console.error('leaderboardBody element not found - DOM not ready yet');
-        return;
-      }
-      
-      // Ensure leaderboardData is initialized
-      if (!leaderboardData || leaderboardData.length === 0) {
-        console.warn('Leaderboard data is empty, initializing...');
-        leaderboardData = initializeLeaderboard();
-      }
-      
-      let sortedData = sortLeaderboard([...leaderboardData]);
-      
-      if (!sortedData || sortedData.length === 0) {
-        console.warn('No leaderboard data to render after initialization, forcing default data');
-        // Force initialize default data
-        leaderboardData = initializeLeaderboard();
-        sortedData = sortLeaderboard([...leaderboardData]);
-        if (!sortedData || sortedData.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Error loading leaderboard. Please refresh the page.</td></tr>';
-          return;
-        }
-      }
       
       tbody.innerHTML = sortedData.map((entry, index) => {
         const isCurrentTeam = entry.teamId === currentTeamId;
@@ -465,131 +411,20 @@
       }).join('');
     }
 
-    // Function to calculate RMSE via GitHub Actions (using proxy endpoint)
-    async function calculateRMSEviaGitHubActions(teamId, predictions) {
-      // Show loading message
-      const submitButton = document.querySelector('button[type="submit"]');
-      const originalText = submitButton.textContent;
-      submitButton.disabled = true;
-      submitButton.textContent = 'Submitting...';
-      
-      try {
-          // Use proxy endpoint (Cloudflare Worker) to trigger GitHub Actions
-          // The proxy stores the GitHub token server-side, so it's never exposed
-          const PROXY_ENDPOINT = 'https://github-proxy.luca-gherardini.workers.dev';
-        
-        if (!PROXY_ENDPOINT) {
-          // Fallback: Show message that integration needs to be configured
-          alert('RMSE calculation service not configured. Please contact administrator.\n\nFor now, using temporary local calculation (values may be visible).');
-          
-          // TEMPORARY FALLBACK - Remove after configuring proxy
-          const actualValues = [0.3, 1, 3, -1];
-          if (predictions.length !== actualValues.length) {
-            alert(`Error: Your predictions must have ${actualValues.length} values, but you provided ${predictions.length}.`);
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
-            return;
-          }
-          
-          const rmse = calculateRMSE(actualValues, predictions);
-          
-          // Update leaderboard locally
-          let teamEntry = leaderboardData.find(entry => entry.teamId === teamId);
-          if (!teamEntry) {
-            const teamName = sessionStorage.getItem('teamName') || 'Unknown Team';
-            teamEntry = {
-              teamId: teamId,
-              team: teamName,
-              score: null,
-              entries: 0,
-              lastSubmission: 'No submissions yet'
-            };
-            leaderboardData.push(teamEntry);
-          }
-          
-          teamEntry.score = rmse;
-          teamEntry.entries += 1;
-          teamEntry.lastSubmission = "Just now";
-          saveLeaderboardData();
-          renderLeaderboard();
-          
-          alert(`Upload successful!\nLatest RMSE Score: ${rmse.toFixed(4)}`);
-          submitButton.disabled = false;
-          submitButton.textContent = originalText;
-          return;
-        }
-        
-        // Call proxy endpoint
-        const response = await fetch(PROXY_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            team_id: teamId,
-            predictions_json: JSON.stringify(predictions),
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to trigger RMSE calculation');
-        }
-
-        const result = await response.json();
-        
-        // Show success message
-        alert('Submission received! RMSE is being calculated by GitHub Actions.\n\nYour score will appear in the leaderboard shortly.');
-        
-        // Poll for updated leaderboard data using the proper function
-        isPolling = true; // Set flag to prevent auto-refresh from interfering
-        let attempts = 0;
-        const maxAttempts = 30; // Increased to 60 seconds (30 * 2s)
-        let foundUpdate = false;
-        const pollInterval = setInterval(async () => {
-          attempts++;
-          
-          try {
-            // Reload all leaderboard data from JSON
-            const updated = await loadLeaderboardFromJSON();
-            
-            if (updated) {
-              // Check if our team's score has been updated
-              const teamEntry = leaderboardData.find(e => e.teamId === teamId);
-              if (teamEntry && teamEntry.score !== null && !foundUpdate) {
-                foundUpdate = true;
-                clearInterval(pollInterval);
-                isPolling = false; // Reset flag
-                
-                const score = teamEntry.score;
-                alert(`RMSE calculated: ${score.toFixed(4)}\n\nYour score has been updated in the leaderboard!`);
-              } else if (attempts >= maxAttempts) {
-                clearInterval(pollInterval);
-                isPolling = false; // Reset flag
-                alert('RMSE calculation is taking longer than expected. Please refresh the page manually in a few moments to see your score.');
-              }
-            } else if (attempts >= maxAttempts) {
-              clearInterval(pollInterval);
-              isPolling = false; // Reset flag
-              alert('RMSE calculation is taking longer than expected. Please refresh the page manually in a few moments to see your score.');
-            }
-          } catch (error) {
-            // File not yet updated, continue polling
-            if (attempts >= maxAttempts) {
-              clearInterval(pollInterval);
-              isPolling = false; // Reset flag
-              alert('RMSE calculation is taking longer than expected. Please refresh the page manually in a few moments to see your score.');
-            }
-          }
-        }, 2000);
-        
-      } catch (error) {
-        console.error('Error calculating RMSE:', error);
-        alert('Error submitting predictions: ' + error.message + '\n\nPlease try again later.');
-      } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = originalText;
+    // Function to calculate RMSE
+    function calculateRMSE(actual, predictions) {
+      if (actual.length !== predictions.length) {
+        throw new Error('Actual and prediction arrays must have the same length');
       }
+      
+      let sumSquaredErrors = 0;
+      for (let i = 0; i < actual.length; i++) {
+        const error = actual[i] - predictions[i];
+        sumSquaredErrors += error * error;
+      }
+      
+      const meanSquaredError = sumSquaredErrors / actual.length;
+      return Math.sqrt(meanSquaredError);
     }
 
     // Function to parse CSV content
@@ -639,17 +474,52 @@
       
       // Read the file
       const reader = new FileReader();
-      reader.onload = async function(e) {
+      reader.onload = function(e) {
         try {
           const csvContent = e.target.result;
           const predictions = parseCSV(csvContent);
           
-          // Calculate RMSE using GitHub Actions (secure - actual values in GitHub Secrets)
-          // This triggers a workflow that calculates RMSE server-side
-          await calculateRMSEviaGitHubActions(currentTeamId, predictions);
+          // Load actual values (in a real app, this would come from server)
+          const actualValues = [0.3, 1, 3, -1]; // Your actual values
           
-          // The leaderboard will be updated by the polling mechanism in calculateRMSEviaGitHubActions
-          // No need to manually update here
+          if (predictions.length !== actualValues.length) {
+            alert(`Error: Your predictions must have ${actualValues.length} values, but you provided ${predictions.length}.`);
+            return;
+          }
+          
+          // Calculate RMSE
+          const rmse = calculateRMSE(actualValues, predictions);
+          
+          // Find the team in the leaderboard
+          let teamEntry = leaderboardData.find(entry => entry.teamId === currentTeamId);
+          
+          if (!teamEntry) {
+            // Create a new entry if team doesn't exist in leaderboard
+            const teamName = sessionStorage.getItem('teamName') || 'Unknown Team';
+            teamEntry = {
+              teamId: currentTeamId,
+              team: teamName,
+              score: null,
+              entries: 0,
+              lastSubmission: 'No submissions yet'
+            };
+            leaderboardData.push(teamEntry);
+          }
+          
+          // Update score with the latest submission (not the best)
+          teamEntry.score = rmse;
+          
+          teamEntry.entries += 1;
+          teamEntry.lastSubmission = "Just now";
+          
+          // Save to localStorage
+          saveLeaderboardData();
+          
+          // Re-render leaderboard
+          renderLeaderboard();
+          
+          // Show success message with RMSE
+          alert(`Upload successful!\nLatest RMSE Score: ${rmse.toFixed(4)}`);
           
         } catch (error) {
           alert('Error processing CSV file: ' + error.message);
@@ -680,148 +550,38 @@
       alert('Leaderboard has been reset.');
     }
 
-    // Function to load leaderboard data from JSON file
-    async function loadLeaderboardFromJSON() {
-      try {
-        const response = await fetch('../assets/leaderboard-data.json?' + Date.now());
-        if (response.ok) {
-          const jsonData = await response.json();
-          
-          if (!jsonData || typeof jsonData !== 'object') {
-            console.warn('Invalid leaderboard JSON data format');
-            return false;
-          }
-          
-          // Convert JSON format to leaderboard format
-          const updatedData = Object.keys(jsonData).map(teamId => {
-            const entry = jsonData[teamId];
-            if (!entry || typeof entry !== 'object') {
-              return null;
-            }
-            return {
-              teamId: teamId,
-              team: teamNames[teamId] || teamId,
-              score: entry.score !== undefined && entry.score !== null ? parseFloat(entry.score) : null,
-              entries: parseInt(entry.entries) || 0,
-              lastSubmission: entry.lastSubmission || 'No submissions yet'
-            };
-          }).filter(entry => entry !== null);
-          
-          // Merge with existing data to preserve all teams
-          updatedData.forEach(updatedEntry => {
-            const existingIndex = leaderboardData.findIndex(e => e.teamId === updatedEntry.teamId);
-            if (existingIndex >= 0) {
-              // Update existing entry but preserve team name from mapping
-              leaderboardData[existingIndex].score = updatedEntry.score;
-              leaderboardData[existingIndex].entries = updatedEntry.entries;
-              leaderboardData[existingIndex].lastSubmission = updatedEntry.lastSubmission;
-            } else {
-              leaderboardData.push(updatedEntry);
-            }
-          });
-          
-          // Ensure all 5 teams are present
-          const existingTeamIds = new Set(leaderboardData.map(e => e.teamId));
-          Object.keys(teamNames).forEach(teamId => {
-            if (!existingTeamIds.has(teamId)) {
-              leaderboardData.push({
-                teamId: teamId,
-                team: teamNames[teamId],
-                score: null,
-                entries: 0,
-                lastSubmission: 'No submissions yet'
-              });
-            }
-          });
-          
-          saveLeaderboardData();
-          renderLeaderboard();
-          return true;
-        } else {
-          // File doesn't exist yet or other error
-          return false;
-        }
-      } catch (error) {
-        // Silently continue with localStorage data if JSON file doesn't exist yet
-        // This is normal for the first load before any submissions
-        console.log('Could not load leaderboard JSON file:', error.message);
-        return false;
-      }
-    }
-
     // Initialize leaderboard when page loads
-    document.addEventListener('DOMContentLoaded', async function() {
-      try {
-        // Ensure leaderboard data is initialized
-        if (!leaderboardData || leaderboardData.length === 0) {
-          leaderboardData = initializeLeaderboard();
-        } else {
-          // Update team names in existing data
-          leaderboardData = initializeLeaderboard();
+    document.addEventListener('DOMContentLoaded', function() {
+      // Update team names in existing data and save
+      leaderboardData = initializeLeaderboard();
+      saveLeaderboardData();
+      
+      // Update user info display
+      updateUserInfo();
+      
+      // Force render leaderboard
+      renderLeaderboard();
+      
+      // Also update user info after a short delay to ensure DOM is ready
+      setTimeout(updateUserInfo, 100);
+      
+      // Check for admin access and show reset button
+      if (sessionStorage.getItem('isAdmin') === 'true') {
+        const adminControls = document.getElementById('adminControls');
+        if (adminControls) {
+          adminControls.style.display = 'block';
         }
-        saveLeaderboardData();
-        
-        // Force render leaderboard first (so it shows even if JSON load fails)
-        // Use setTimeout to ensure DOM is fully ready
-        setTimeout(() => {
-          renderLeaderboard();
-        }, 100);
-        
-        // Try to load from JSON file (generated by GitHub Actions)
-        try {
-          await loadLeaderboardFromJSON();
-        } catch (error) {
-          console.log('Could not load leaderboard from JSON file (this is normal if file does not exist yet):', error);
-          // Render again after trying to load JSON (in case it failed)
-          renderLeaderboard();
-        }
-        
-        // Update user info display
-        updateUserInfo();
-        
-        // Also update user info after a short delay to ensure DOM is ready
-        setTimeout(updateUserInfo, 200);
-        
-        // Check for admin access and show reset button
-        if (sessionStorage.getItem('isAdmin') === 'true') {
-          const adminControls = document.getElementById('adminControls');
-          if (adminControls) {
-            adminControls.style.display = 'block';
-          }
-        }
-        
-        // Add form submit handler
-        const form = document.getElementById('uploadForm');
-        if (form) {
-          form.addEventListener('submit', handleFormSubmit);
-        }
-      } catch (error) {
-        console.error('Error initializing leaderboard:', error);
-        // Try to render anyway with default data
-        try {
-          leaderboardData = initializeLeaderboard();
-          renderLeaderboard();
-        } catch (renderError) {
-          console.error('Error rendering leaderboard:', renderError);
-          alert('Error loading leaderboard. Please refresh the page.');
-        }
+      }
+      
+      // Add form submit handler
+      const form = document.getElementById('uploadForm');
+      if (form) {
+        form.addEventListener('submit', handleFormSubmit);
       }
     });
 
-    // Auto-refresh leaderboard every 30 seconds (load from JSON file)
-    // This will update the leaderboard with the latest data from GitHub Actions
-    let isPolling = false; // Track if we're actively polling after a submission
-    setInterval(async () => {
-      // Only auto-refresh if we're not actively polling after a submission
-      // This prevents unnecessary updates while waiting for a submission result
-      if (!isPolling) {
-        const updated = await loadLeaderboardFromJSON();
-        if (updated) {
-          // Silently update the leaderboard without alerting the user
-          renderLeaderboard();
-        }
-      }
-    }, 30000);
+    // Auto-refresh leaderboard every 30 seconds (optional)
+    setInterval(renderLeaderboard, 30000);
   </script>
 </body>
 </html>

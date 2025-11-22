@@ -1,7 +1,0 @@
-name = "github-proxy"
-main = "github-proxy.js"
-compatibility_date = "2024-01-01"
-
-# Your worker will be available at: https://github-proxy.luca-gherardini.workers.dev
-# Deploy with: wrangler deploy --config wrangler-github-proxy.toml
-
