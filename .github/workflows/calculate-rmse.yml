@@ -24,6 +24,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate secrets
+        run: |
+          if [ -z "${{ secrets.ACTUAL_VALUES }}" ]; then
+            echo "::error::ACTUAL_VALUES secret is not set. Please configure it in GitHub Secrets (Settings -> Secrets and variables -> Actions)."
+            echo "The secret should be a comma-separated list of numbers, e.g., '1.0,2.5,3.7,4.2'"
+            exit 1
+          fi
+          echo "✓ ACTUAL_VALUES secret is configured"
+
       - name: Parse inputs
         id: parse
         run: |
@@ -41,12 +50,7 @@ jobs:
       - name: Calculate RMSE
         id: rmse
         run: |
-          # Get actual values from GitHub Secret
-          ACTUAL_VALUES="${{ secrets.ACTUAL_VALUES }}"
-          
-          # Parse predictions from JSON
-          PREDICTIONS='${{ steps.parse.outputs.predictions }}'
-          
+          # ACTUAL_VALUES and PREDICTIONS are set via env section below
           # Debug: Show what we're working with (without exposing secrets)
           echo "Actual values count: $(echo "$ACTUAL_VALUES" | tr ',' '\n' | grep -c .)"
           echo "Predictions: $PREDICTIONS"
@@ -166,9 +170,7 @@ jobs:
 
       - name: Update leaderboard data
         run: |
-          TEAM_ID='${{ steps.parse.outputs.team_id }}'
-          RMSE='${{ steps.extract_rmse.outputs.RMSE_VALUE }}'
-          
+          # TEAM_ID and RMSE are already set via env section below
           if [ -z "$RMSE" ] || [ "$RMSE" = "" ]; then
             echo "Error: RMSE value is empty"
             exit 1
