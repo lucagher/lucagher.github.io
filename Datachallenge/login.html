@@ -231,6 +231,8 @@
       color: var(--aau-blue);
     }
   </style>
+  <!-- Load credential hashes generated from GitHub Secrets -->
+  <script src="assets/credential-hashes.js"></script>
   <script>
     // Team credentials (hashes are injected at deploy-time via assets/credential-hashes.js)
     const teamCredentials = {
@@ -242,9 +244,12 @@
     };
     
     // Multiple competition password system (passwordHash injected at deploy-time)
+    // Fallback hash for AAU2025 if credential-hashes.js is not loaded
+    const ADMIN_PASSWORD_HASH_FALLBACK = '2ea7a8e0bddbcc81de917ea0991e93a8f17184dde6d1d997277d3dbf6d5cf1e0';
+    
     const competitions = {
       'renewable': {
-        passwordHash: (window.CREDENTIAL_HASHES?.competitions?.renewable?.passwordHash || ''), // from env
+        passwordHash: (window.CREDENTIAL_HASHES?.competitions?.renewable?.passwordHash || ADMIN_PASSWORD_HASH_FALLBACK),
         redirect: 'private/overview.html',
         name: 'Renewable Energy Forecasting',
         emoji: '⚡'
