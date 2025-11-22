@@ -47,6 +47,10 @@ jobs:
           # Parse predictions from JSON
           PREDICTIONS='${{ steps.parse.outputs.predictions }}'
           
+          # Debug: Show what we're working with (without exposing secrets)
+          echo "Actual values count: $(echo "$ACTUAL_VALUES" | tr ',' '\n' | grep -c .)"
+          echo "Predictions: $PREDICTIONS"
+          
           # Calculate RMSE using Python
           python3 << 'PYTHON_SCRIPT'
           import json
@@ -54,14 +58,45 @@ jobs:
           import sys
           import os
           
-          actual_str = os.environ.get('ACTUAL_VALUES', '')
-          actual = [float(x.strip()) for x in actual_str.split(',') if x.strip()]
+          actual_str = os.environ.get('ACTUAL_VALUES', '').strip()
+          if not actual_str:
+              print("Error: ACTUAL_VALUES is empty or not set", file=sys.stderr)
+              sys.exit(1)
           
-          predictions_str = os.environ.get('PREDICTIONS', '')
-          predictions = json.loads(predictions_str)
+          # Parse actual values, filtering out empty strings
+          actual = []
+          for x in actual_str.split(','):
+              x_clean = x.strip()
+              if x_clean:
+                  try:
+                      actual.append(float(x_clean))
+                  except ValueError:
+                      print(f"Error: Could not convert '{x_clean}' to float", file=sys.stderr)
+                      sys.exit(1)
+          
+          if len(actual) == 0:
+              print("Error: No valid actual values found", file=sys.stderr)
+              sys.exit(1)
+          
+          predictions_str = os.environ.get('PREDICTIONS', '').strip()
+          if not predictions_str:
+              print("Error: PREDICTIONS is empty", file=sys.stderr)
+              sys.exit(1)
+          
+          try:
+              predictions = json.loads(predictions_str)
+          except json.JSONDecodeError as e:
+              print(f"Error: Invalid JSON in predictions: {e}", file=sys.stderr)
+              sys.exit(1)
+          
+          if not isinstance(predictions, list):
+              print("Error: Predictions must be a list", file=sys.stderr)
+              sys.exit(1)
           
           if len(predictions) != len(actual):
               print(f"Error: predictions length {len(predictions)} != actual length {len(actual)}", file=sys.stderr)
+              print(f"Actual values: {actual}", file=sys.stderr)
+              print(f"Predictions: {predictions}", file=sys.stderr)
               sys.exit(1)
           
           sum_squared_errors = sum((actual[i] - predictions[i]) ** 2 for i in range(len(actual)))
