@@ -396,8 +396,22 @@
         });
         
         if (response.ok) {
-          const serverData = await response.json();
-          console.log('Loaded server data from Supabase:', serverData);
+          let serverData;
+          try {
+            const responseText = await response.text();
+            console.log('Raw response from get-leaderboard:', responseText);
+            serverData = JSON.parse(responseText);
+            console.log('Parsed server data from Supabase:', serverData);
+          } catch (e) {
+            console.error('Error parsing response from get-leaderboard:', e);
+            throw new Error('Invalid JSON response from server');
+          }
+          
+          // Validate serverData is an object
+          if (!serverData || typeof serverData !== 'object') {
+            console.error('Invalid serverData format:', serverData);
+            throw new Error('Invalid server data format');
+          }
           
           // SERVER IS SOURCE OF TRUTH - completely overwrite local data for teams in server data
           // First, reset all teams that are NOT in server data (they have no submissions or were reset)
@@ -472,11 +486,20 @@
           
           // Save merged data to localStorage
           saveLeaderboardData();
-          console.log('Leaderboard data after load:', leaderboardData);
+          console.log('✅ Leaderboard data after load:', leaderboardData);
+          console.log('✅ Number of teams updated:', Object.keys(serverData).length);
+          return true; // Indicate success
+        } else {
+          console.error('❌ Failed to load leaderboard data. Status:', response.status, response.statusText);
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          return false;
         }
       } catch (error) {
-        console.warn('Could not load leaderboard data from Supabase:', error);
+        console.error('❌ Error loading leaderboard data from Supabase:', error);
+        console.error('Error details:', error.message, error.stack);
         // Continue with local data if server fetch fails
+        return false;
       }
     }
     
@@ -694,16 +717,30 @@
         throw new Error(errorMessage);
       }
       
-      const result = await response.json();
-      console.log('Supabase response:', result);
+      let result;
+      try {
+        const responseText = await response.text();
+        console.log('Supabase raw response:', responseText);
+        result = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Error parsing response:', e);
+        throw new Error('Invalid JSON response from server');
+      }
+      
+      console.log('Supabase parsed response:', result);
       
       // Validate response structure
       if (!result || typeof result !== 'object') {
-        throw new Error('Invalid response from Supabase');
+        throw new Error('Invalid response from Supabase: response is not an object');
       }
       
-      if (!result.success) {
+      if (result.success === false || (result.error && !result.success)) {
         throw new Error(result.error || 'Failed to calculate RMSE');
+      }
+      
+      // Ensure success is true if not explicitly false
+      if (result.success === undefined) {
+        result.success = true;
       }
       
       return result;
@@ -711,10 +748,12 @@
 
     // Function to handle form submission
     async function handleFormSubmit(event) {
+      console.log('📤 Form submit triggered!');
       event.preventDefault();
       
       // Get the current logged-in team
       const currentTeamId = sessionStorage.getItem('teamId');
+      console.log('Current team ID:', currentTeamId);
       
       if (!currentTeamId) {
         alert('Please log in to submit predictions!');
@@ -724,6 +763,7 @@
       // Get the uploaded file
       const fileInput = document.querySelector('input[type="file"]');
       const file = fileInput.files[0];
+      console.log('Selected file:', file ? file.name : 'none');
       
       if (!file) {
         alert('Please select a CSV file to upload!');
@@ -740,9 +780,11 @@
       const originalButtonText = submitButton.textContent;
       submitButton.disabled = true;
       submitButton.textContent = 'Processing...';
+      console.log('✅ Submit button disabled and text changed to "Processing..."');
       
       // Read the file - ALWAYS read fresh content, even if same filename
       const reader = new FileReader();
+      let statusDiv = null; // Declare statusDiv outside try block so it's accessible in catch
       reader.onload = async function(e) {
         try {
           // Get fresh file reference to ensure we're reading the current file
@@ -772,11 +814,6 @@
             throw new Error(`Invalid predictions found. All values must be numbers.`);
           }
           
-          // Validate we have exactly 4 predictions (matching actual.csv)
-          if (predictions.length !== 4) {
-            throw new Error(`Expected exactly 4 predictions, but found ${predictions.length}. Please check your CSV file.`);
-          }
-          
           // Debug: log predictions before sending
           console.log('=== DEBUG: Predictions Upload ===');
           console.log('Raw CSV content length:', csvContent.length);
@@ -786,18 +823,15 @@
           console.log('Predictions type check:', Array.isArray(predictions));
           console.log('Each prediction:', predictions.map((p, i) => `[${i}]=${p} (type: ${typeof p})`));
           
-          // Validate predictions count matches expected (4 values based on actual.csv)
-          if (predictions.length !== 4) {
-            console.warn(`⚠️ WARNING: Expected 4 predictions, got ${predictions.length}`);
-          }
-          
-          // Validate predictions count (must match actual values count, which is 4)
-          if (predictions.length !== 4) {
-            throw new Error(`Expected exactly 4 predictions, but got ${predictions.length}. Please check your CSV file.`);
+          // Validate predictions count (must match actual values count, which is 228)
+          // Note: The actual values in the database have 228 entries
+          if (predictions.length !== 228) {
+            throw new Error(`Expected exactly 228 predictions, but got ${predictions.length}. Please check your CSV file.`);
           }
           
           // Show processing message
-          const statusDiv = document.createElement('div');
+          console.log('📊 Creating status div with "Calculating RMSE..." message');
+          statusDiv = document.createElement('div');
           statusDiv.id = 'uploadStatus';
           statusDiv.className = 'fixed top-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
           statusDiv.innerHTML = `
@@ -810,6 +844,7 @@
             </div>
           `;
           document.body.appendChild(statusDiv);
+          console.log('✅ Status div added to page:', statusDiv);
           
           // Submit to Supabase and get immediate result (much faster than GitHub Actions!)
           console.log('Submitting predictions to Supabase...');
@@ -909,24 +944,26 @@
           
           // Reset form - IMPORTANT: clear the file input to allow re-uploading the same file
           // This ensures that even if the user selects the same file again, it will be re-read
+          console.log('🔄 Resetting form...');
           fileInput.value = '';
           
-          // Force the file input to reset by cloning and replacing it
-          // This ensures the browser will trigger change event even for the same file
-          const newFileInput = fileInput.cloneNode(true);
-          fileInput.parentNode.replaceChild(newFileInput, fileInput);
+          // Note: We don't need to clone/replace the input anymore since we're using FileReader
+          // which always reads fresh content. Just clear the value.
           
-          // Re-attach the form to the new input
+          // Re-attach the form submit handler (in case it was removed)
           const form = document.getElementById('uploadForm');
           if (form) {
+            // Remove old listener if exists and add new one
+            form.removeEventListener('submit', handleFormSubmit);
             form.addEventListener('submit', handleFormSubmit);
+            console.log('✅ Form submit handler re-attached');
           }
           
         } catch (error) {
           console.error('Submission error:', error);
           
-          // Remove processing status
-          if (statusDiv.parentNode) {
+          // Remove processing status if it was created
+          if (statusDiv && statusDiv.parentNode) {
             statusDiv.parentNode.removeChild(statusDiv);
           }
           
@@ -975,8 +1012,14 @@
           </svg>
         `;
         
-        await loadLeaderboardData(true);
-        renderLeaderboard();
+        const loadSuccess = await loadLeaderboardData(true);
+        if (loadSuccess) {
+          renderLeaderboard();
+          console.log('✅ Leaderboard refreshed successfully');
+        } else {
+          console.error('❌ Failed to refresh leaderboard');
+          alert('Failed to refresh leaderboard. Please try again.');
+        }
         
         refreshBtn.innerHTML = originalHTML;
         refreshBtn.disabled = false;
@@ -1148,11 +1191,13 @@
       
         // Load latest data from Supabase (server is source of truth)
         console.log('Loading leaderboard data from Supabase...');
-        await loadLeaderboardData(true); // Force refresh from Supabase
+        const loadSuccess = await loadLeaderboardData(true); // Force refresh from Supabase
+        console.log('Load result:', loadSuccess ? '✅ Success' : '❌ Failed');
       
         // Render leaderboard
         console.log('Rendering leaderboard...');
-      renderLeaderboard();
+        renderLeaderboard();
+        console.log('✅ Leaderboard rendered with', leaderboardData.length, 'teams');
       
         // Update user info display
         console.log('Updating user info...');
