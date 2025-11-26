@@ -1,52 +1,55 @@
 📘 Submission Guidelines
 =======================
-This document describes the exact format required for valid leaderboard submissions.  
-Read carefully: malformed files are rejected automatically.
+This document explains the exact format required for every leaderboard submission. Files that do not follow these rules are rejected automatically.
 
 📥 File Format
 --------------
-- Submit **one CSV file**.
+- Submit **one CSV file** only.
 - The file must contain **exactly one column named `prediction`**.
-- You must provide **228 numeric rows** (one value per test sample).
-- Do **not** add IDs, dates, indexes, headers with other names, extra commas, etc.
+- Include **228 numeric values** (one prediction per row in the test set).
+- Do **not** add IDs, dates, row numbers, blank rows, or extra separators.
 
 📌 Ordering Rules
 -----------------
-Predictions must follow the same order as `Datachallenge/assets/test.csv`.
+Predictions must follow the same order as `Datachallenge/assets/test.csv`. The first prediction corresponds to the first test row, the second prediction to the second row, and so on.
 
-Example:
-Test rows (simplified)
-1. (Id=A, Date=2020‑05‑06)
-2. (Id=A, Date=2020‑05‑07)
-3. (Id=A, Date=2020‑05‑08)
+Example test rows (simplified)
+```
+Id,Date
+A,2020-05-06
+A,2020-05-07
+A,2020-05-08
 ...
+B,2020-05-10
+```
 
-Your CSV must be:
+Your CSV must look like:
 ```
 prediction
 value_for_row_1
 value_for_row_2
 value_for_row_3
 ...
+value_for_row_228
 ```
 
 ❌ Submissions that will be rejected
 -----------------------------------
 - Additional columns like `Id`, `Date`, `row_number`, etc.
-- Using a different column name (must be `prediction`).
-- Changing the row order or dropping rows.
-- Submitting fewer or more than 228 rows.
-- Exporting with index numbers automatically added by pandas/R.
+- Different column name (it must be `prediction`).
+- Changing the row order or skipping rows.
+- Providing fewer or more than 228 predictions.
+- Exporting with index numbers generated automatically by pandas/R.
 
 📤 Export templates
 -------------------
-**R**
+R
 ```
 submission <- data.frame(prediction = preds)
 write.csv(submission, "submission.csv", row.names = FALSE)
 ```
 
-**Python**
+Python
 ```
 import pandas as pd
 submission = pd.DataFrame({"prediction": preds})
@@ -55,36 +58,36 @@ submission.to_csv("submission.csv", index=False)
 
 📝 Pre-flight checklist
 -----------------------
-✔ One column named `prediction`.  
-✔ 228 numeric rows (no blanks, no strings).  
-✔ Order identical to `test.csv`.  
+✔ Column name is exactly `prediction`.
+✔ 228 numeric rows (no blanks, no text).
+✔ Order identical to `test.csv`.
 ✔ Saved as CSV without index or hidden metadata.
+✔ File encoding is UTF-8 (default from R/pandas).
 
- 📂 Dataset Description
-This dataset contains daily-level information collected from Fitbit wearable devices.
-It integrates **physical activity**, **active distances**, **sedentary behavior**, **sleep metrics**, 
-and **body composition** for some users, observed over multiple days.
+📂 Dataset Description
+======================
+This dataset contains daily-level information collected from Fitbit wearable devices. It integrates physical activity, active distances, sedentary behavior, sleep metrics, and body composition for multiple users across several days.
 
 Each record represents user activity in a specific date
-  
+ 
  🎯 Prediction Task (Regression)
-  
+ 
 
 ---
-  
+ 
   📊 Variable Dictionary
-  
+ 
   🧍 Identifiers & Metadata
-  
+ 
   | Variable | Type    | Description                              |
   | -------- | ------- | ---------------------------------------- |
   | `Id`     | numeric | Unique anonymized participant identifier |
   | `Date`   | date    | Activity date (YYYY-MM-DD)               |
-  
+ 
   ---
-  
+ 
   🏃 Physical Activity (minutes and distances)
-  
+ 
   | Variable                   | Type    | Description                                    |
   | -------------------------- | ------- | ---------------------------------------------- |
   | `TotalSteps`               | numeric | Total steps recorded that day                  |
@@ -99,21 +102,21 @@ Each record represents user activity in a specific date
   | `FairlyActiveMinutes`      | numeric | Minutes of moderate activity                   |
   | `LightlyActiveMinutes`     | numeric | Minutes of light activity                      |
   | `SedentaryMinutes`         | numeric | Minutes of inactivity/sitting                  |
-  
+ 
   ---
-  
+ 
   😴 Sleep Metrics
-  
+ 
   | Variable             | Type    | Description                               |
   | -------------------- | ------- | ----------------------------------------- |
   | `TotalSleepRecords`  | numeric | Number of sleep periods recorded          |
   | `TotalMinutesAsleep` | numeric | Total minutes asleep                      |
   | `TotalTimeInBed`     | numeric | Total minutes spent in bed (sleep + rest) |
-  
+ 
   ---
-  
+ 
   ⚖️ Body Composition (if available)
-  
+ 
   | Variable         | Type                     | Description                         |
   | ---------------- | ------------------------ | ----------------------------------- |
   | `WeightKg`       | numeric (may contain NA) | Weight in kilograms                 |
@@ -122,14 +125,13 @@ Each record represents user activity in a specific date
   | `BMI`            | numeric                  | Body mass index                     |
   | `IsManualReport` | factor                   | Whether the weight entry was manual |
   | `LogId`          | numeric                  | Weight log record identifier        |
-  
+ 
   ---
-  
+ 
   🔥 Target Variable
-  
+ 
   | Variable   | Type    | Description                                            |
   | ---------- | ------- | ------------------------------------------------------ |
   | `Calories` | numeric | **Total calories burned that day** (regression target) |
-  
+ 
   ---
-  
