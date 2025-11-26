@@ -1041,20 +1041,27 @@
         throw new Error('Supabase not configured. Cannot reset leaderboard on server.');
       }
       
-      // Use REST API to call database function directly
-      const restUrl = `${supabaseUrl}/rest/v1/rpc/reset_leaderboard`;
-      console.log('Resetting leaderboard via REST API:', restUrl);
+      // Use Edge Function so the service role key stays on the server
+      const functionUrl = `${supabaseUrl}/functions/v1/reset-leaderboard`;
+      console.log('Resetting leaderboard via Edge Function:', functionUrl);
       
       try {
-        const response = await fetch(restUrl, {
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        };
+
+        const adminResetSecret = window.CREDENTIAL_HASHES?.admin?.resetSecret;
+        if (adminResetSecret) {
+          headers['x-admin-secret'] = adminResetSecret;
+        }
+
+        const response = await fetch(functionUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${supabaseAnonKey}`,
-            'apikey': supabaseAnonKey,
-            'Prefer': 'return=representation'
-          },
-          body: JSON.stringify({})
+          headers,
+          body: JSON.stringify({ reason: 'admin-reset' })
         });
         
         console.log('Reset response status:', response.status, response.statusText);

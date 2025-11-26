@@ -1,26 +1,80 @@
-Competition rules: Submit your predictions in CSV format.
+📘 Submission Guidelines
+=======================
+This document describes the exact format required for valid leaderboard submissions.  
+Read carefully: malformed files are rejected automatically.
 
+📥 File Format
+--------------
+- Submit **one CSV file**.
+- The file must contain **exactly one column named `prediction`**.
+- You must provide **228 numeric rows** (one value per test sample).
+- Do **not** add IDs, dates, indexes, headers with other names, extra commas, etc.
 
+📌 Ordering Rules
+-----------------
+Predictions must follow the same order as `Datachallenge/assets/test.csv`.
 
+Example:
+Test rows (simplified)
+1. (Id=A, Date=2020‑05‑06)
+2. (Id=A, Date=2020‑05‑07)
+3. (Id=A, Date=2020‑05‑08)
+...
 
+Your CSV must be:
+```
+prediction
+value_for_row_1
+value_for_row_2
+value_for_row_3
+...
+```
 
+❌ Submissions that will be rejected
+-----------------------------------
+- Additional columns like `Id`, `Date`, `row_number`, etc.
+- Using a different column name (must be `prediction`).
+- Changing the row order or dropping rows.
+- Submitting fewer or more than 228 rows.
+- Exporting with index numbers automatically added by pandas/R.
+
+📤 Export templates
+-------------------
+**R**
+```
+submission <- data.frame(prediction = preds)
+write.csv(submission, "submission.csv", row.names = FALSE)
+```
+
+**Python**
+```
+import pandas as pd
+submission = pd.DataFrame({"prediction": preds})
+submission.to_csv("submission.csv", index=False)
+```
+
+📝 Pre-flight checklist
+-----------------------
+✔ One column named `prediction`.  
+✔ 228 numeric rows (no blanks, no strings).  
+✔ Order identical to `test.csv`.  
+✔ Saved as CSV without index or hidden metadata.
 
  📂 Dataset Description
-  
 This dataset contains daily-level information collected from Fitbit wearable devices.
 It integrates **physical activity**, **active distances**, **sedentary behavior**, **sleep metrics**, 
 and **body composition** for some users, observed over multiple days.
 
 Each record represents user activity in a specific date
   
-## 🎯 Prediction Task (Regression)
+ 🎯 Prediction Task (Regression)
   
 
 ---
   
   📊 Variable Dictionary
   
-  🧍 **Identifiers & Metadata**
+  🧍 Identifiers & Metadata
   
   | Variable | Type    | Description                              |
   | -------- | ------- | ---------------------------------------- |
@@ -29,7 +83,7 @@ Each record represents user activity in a specific date
   
   ---
   
-  ### 🏃 **Physical Activity (minutes and distances)**
+  🏃 Physical Activity (minutes and distances)
   
   | Variable                   | Type    | Description                                    |
   | -------------------------- | ------- | ---------------------------------------------- |
@@ -48,7 +102,7 @@ Each record represents user activity in a specific date
   
   ---
   
-  ### 😴 **Sleep Metrics**
+  😴 Sleep Metrics
   
   | Variable             | Type    | Description                               |
   | -------------------- | ------- | ----------------------------------------- |
@@ -58,7 +112,7 @@ Each record represents user activity in a specific date
   
   ---
   
-  ### ⚖️ **Body Composition (if available)**
+  ⚖️ Body Composition (if available)
   
   | Variable         | Type                     | Description                         |
   | ---------------- | ------------------------ | ----------------------------------- |
@@ -71,7 +125,7 @@ Each record represents user activity in a specific date
   
   ---
   
-  ### 🔥 **Target Variable**
+  🔥 Target Variable
   
   | Variable   | Type    | Description                                            |
   | ---------- | ------- | ------------------------------------------------------ |

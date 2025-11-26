@@ -1,15 +1,16 @@
 // Supabase Edge Function for RMSE Calculation
 // This function handles prediction submissions and calculates RMSE server-side
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+/// <reference path="../types.d.ts" />
+import "jsr:@supabase/functions-js/edge-runtime.d.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?dts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, cache-control, pragma',
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -17,8 +18,17 @@ serve(async (req) => {
 
   try {
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseUrl = (globalThis as any).Deno?.env.get('SUPABASE_URL')
+    const supabaseServiceKey = (globalThis as any).Deno?.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(
+        JSON.stringify({ error: 'Missing Supabase environment variables' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // Parse request body
@@ -112,13 +122,15 @@ serve(async (req) => {
     }
 
     // Ensure success field is present
-    if (result.success === undefined) {
-      result.success = true
+    const normalizedResult = result as Record<string, unknown> & { success?: boolean }
+
+    if (normalizedResult.success === undefined) {
+      normalizedResult.success = true
     }
 
-    console.log('Returning result:', result)
+    console.log('Returning result:', normalizedResult)
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify(normalizedResult),
       { 
         status: 200, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
