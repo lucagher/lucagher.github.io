@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overview - AAU Data Challenge</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --aau-blue: #276C8A;
+      --aau-light-blue: #6699CC;
+      --aau-gray: #F5F7FA;
+      --dark-gray: #1f2937;
+      --light-gray: #f8fafc;
+    }
+    
+    .title-main {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: var(--dark-gray);
+      letter-spacing: -0.025em;
+    }
+    
+    .title-section {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      color: var(--aau-blue);
+    }
+    
+    .btn-nav {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-nav.active {
+      background: var(--aau-blue);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-nav:not(.active) {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    
+    .btn-nav:not(.active):hover {
+      background: #e2e8f0;
+      color: var(--aau-blue);
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+      .title-main {
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+      
+      .card {
+        margin: 0 1rem;
+        padding: 1.25rem;
+      }
+      
+      .btn-nav {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .title-main {
+        font-size: 1.75rem;
+      }
+      
+      .card {
+        margin: 0 0.5rem;
+        padding: 1rem;
+      }
+      
+      .btn-nav {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[var(--aau-gray)] text-gray-800">
+  <!-- Logo and Title -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between">
+      <!-- Title Section -->
+      <div class="text-center lg:text-left mb-6 lg:mb-0 flex-1">
+        <h1 class="title-main text-2xl sm:text-3xl lg:text-4xl mb-4 font-bold" style="color: var(--aau-blue); font-family: 'Lato', sans-serif;">Competition Dashboard</h1>
+        
+        <!-- Back to Home Button -->
+        <div class="mt-4 sm:mt-6 flex flex-col gap-3">
+          <div class="flex gap-3">
+          <a href="../index.html" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Home
+          </a>
+          <button onclick="logout()" class="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-900 rounded-lg transition-all duration-300 font-medium text-sm sm:text-base" style="font-family: 'Inter', sans-serif;">
+            Logout
+          </button>
+          </div>
+          <!-- User Info with Emoji -->
+          <div id="userInfo" class="flex items-center gap-2 mt-2" style="display: none;">
+            <span id="userEmoji" class="text-2xl cursor-pointer hover:scale-110 transition-transform" onclick="changeTeamEmoji()" title="Click to change emoji"></span>
+            <span id="userName" class="text-sm font-medium text-gray-700"></span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Logo -->
+      <div class="flex-shrink-0 lg:ml-8">
+        <img src="../assets/logo2.png" alt="Universität Klagenfurt logo" class="h-16 sm:h-20 lg:h-24 opacity-90">
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex justify-center mb-8 sm:mb-12 px-4">
+    <div class="bg-gray-100 p-1 rounded-lg w-full max-w-md">
+      <div class="grid grid-cols-3 gap-1">
+        <a href="overview.html" class="btn-nav active px-2 sm:px-4 py-2 rounded-md text-center">Overview</a>
+        <a href="dataset.html" class="btn-nav px-2 sm:px-4 py-2 rounded-md text-center">Dataset</a>
+        <a href="leaderboard.html" class="btn-nav px-2 sm:px-4 py-2 rounded-md text-center">Leaderboard</a>
+      </div>
+    </div>
+  </nav>
+  <!-- Content -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 space-y-4 sm:space-y-6">
+    <section class="card p-4 sm:p-6 lg:p-8">
+      <h2 class="title-section text-xl sm:text-2xl mb-4 sm:mb-6">Challenge Overview</h2>
+      <p class="mb-4 text-gray-600 leading-relaxed text-sm sm:text-base">
+        This challenge focuses on building a machine learning model to predict <strong>daily calories burned</strong> (`Calories`)
+        using wearable device data. The dataset integrates physical activity, active distances, sedentary behavior,
+        sleep metrics, and body composition for 33 unique users observed over multiple days.
+      </p>
+      <p class="mb-6 text-gray-600 leading-relaxed text-sm sm:text-base">
+        Your goal is to produce the most accurate predictions possible using RMSE as the evaluation metric. Submit your predictions
+        regularly to climb the leaderboard!
+      </p>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-6 sm:mt-8">
+        <div class="bg-blue-50 p-4 sm:p-6 rounded-lg text-center">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <span class="text-blue-600 text-lg sm:text-xl">📊</span>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">Data Science</h3>
+          <p class="text-xs sm:text-sm text-gray-600">Machine Learning & Analytics</p>
+        </div>
+        
+        <div class="bg-green-50 p-4 sm:p-6 rounded-lg text-center">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <span class="text-green-600 text-lg sm:text-xl">🏃</span>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">Activity Tracking</h3>
+          <p class="text-xs sm:text-sm text-gray-600">Fitbit Wearable Data</p>
+        </div>
+        
+        <div class="bg-purple-50 p-4 sm:p-6 rounded-lg text-center sm:col-span-2 lg:col-span-1">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <span class="text-purple-600 text-lg sm:text-xl">🏆</span>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">Competition</h3>
+          <p class="text-xs sm:text-sm text-gray-600"> Bonus Points </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-4 sm:p-6 lg:p-8">
+      <h3 class="title-section text-lg sm:text-xl mb-4 sm:mb-6">Prediction Task</h3>
+      <div class="mb-4">
+        <h4 class="font-semibold text-gray-900 mb-3 text-sm sm:text-base">Objective</h4>
+        <p class="text-gray-600 mb-4 text-sm sm:text-base leading-relaxed">
+          Predict the <strong>total calories burned</strong> in a day (`Calories`) for a given user, based on their activity, sleep, and physiological characteristics.
+        </p>
+        <div class="bg-blue-50 p-3 sm:p-4 rounded-lg mb-4">
+          <p class="text-sm sm:text-base font-semibold text-blue-900 mb-2">📊 Evaluation Metric:</p>
+          <p class="text-sm sm:text-base text-blue-800 font-mono">RMSE (Root Mean Squared Error)</p>
+          
+          <details class="mt-4">
+            <summary class="text-xs sm:text-sm font-semibold text-blue-900 cursor-pointer hover:text-blue-700">View RMSE Formulas (Python & R)</summary>
+            <div class="mt-3 space-y-3 text-xs">
+              <div class="bg-white p-3 rounded border border-blue-200">
+                <p class="font-semibold text-gray-800 mb-2">Python:</p>
+                <pre class="text-xs overflow-x-auto"><code>import numpy as np
+
+def calculate_rmse(actual, predicted):
+    mse = np.mean((actual - predicted) ** 2)
+    return np.sqrt(mse)</code></pre>
+              </div>
+              <div class="bg-white p-3 rounded border border-blue-200">
+                <p class="font-semibold text-gray-800 mb-2">R:</p>
+                <pre class="text-xs overflow-x-auto"><code>calculate_rmse <- function(actual, predicted) {
+  mse <- mean((actual - predicted)^2)
+  return(sqrt(mse))
+}</code></pre>
+              </div>
+              <div class="bg-white p-3 rounded border border-blue-200">
+                <p class="font-semibold text-gray-800 mb-2">Formula:</p>
+                <p class="text-gray-700 font-mono">RMSE = √(1/n × Σ(y_actual - y_predicted)²)</p>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+      
+      <div>
+        <h4 class="font-semibold text-gray-900 mb-3 text-sm sm:text-base">Key Variables</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs font-semibold text-gray-700 mb-1">🏃 Physical Activity</p>
+            <p class="text-xs text-gray-600">Steps, distances, active minutes</p>
+          </div>
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs font-semibold text-gray-700 mb-1">😴 Sleep Metrics</p>
+            <p class="text-xs text-gray-600">Sleep records, minutes asleep, time in bed</p>
+          </div>
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs font-semibold text-gray-700 mb-1">⚖️ Body Composition</p>
+            <p class="text-xs text-gray-600">Weight, BMI</p>
+          </div>
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs font-semibold text-gray-700 mb-1">🔥 Target</p>
+            <p class="text-xs text-gray-600"><strong>Calories</strong> (daily total)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-4 sm:p-6 lg:p-8">
+      <h3 class="title-section text-lg sm:text-xl mb-4 sm:mb-6">Timeline & Rules</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        <div>
+          <h4 class="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Competition Timeline</h4>
+          <div class="space-y-3">
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+              <span class="text-gray-700 text-sm sm:text-base">Start: 27 Nov 2025</span>
+            </div>
+            <div class="flex items-center">
+              <div class="w-3 h-3 bg-red-500 rounded-full mr-3 flex-shrink-0"></div>
+              <span class="text-gray-700 text-sm sm:text-base">End: 20 Jan 2026</span>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">Key Rules</h4>
+          <ul class="space-y-2 text-xs sm:text-sm text-gray-600">
+            <li>• Submit predictions in CSV format</li>
+            <li>• Unlimeted number of submissions per day</li>
+            <li>• Use only provided datasets</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Team emoji mapping (default emojis)
+    const teamDefaultEmojis = {
+      'aau26_team1': '🏴‍☠️',
+      'aau26_team2': '🦸',
+      'aau26_team3': '📊',
+      'aau26_team4': '🎯',
+      'aau26_team5': '💻'
+    };
+
+    // Function to get team emoji
+    function getTeamEmoji(teamId) {
+      const emojis = JSON.parse(localStorage.getItem('teamEmojis') || '{}');
+      return emojis[teamId] || teamDefaultEmojis[teamId] || '👤';
+    }
+
+    // Function to save team emoji
+    function saveTeamEmoji(teamId, emoji) {
+      const emojis = JSON.parse(localStorage.getItem('teamEmojis') || '{}');
+      emojis[teamId] = emoji;
+      localStorage.setItem('teamEmojis', JSON.stringify(emojis));
+    }
+
+    // Function to change team emoji
+    function changeTeamEmoji() {
+      const currentTeamId = sessionStorage.getItem('teamId');
+      if (!currentTeamId) {
+        alert('Please log in to change your team emoji!');
+        return;
+      }
+
+      const currentEmoji = getTeamEmoji(currentTeamId);
+      const newEmoji = prompt('Enter a new emoji for your team:', currentEmoji);
+      
+      if (newEmoji && newEmoji.trim()) {
+        // Validate that it's mostly emoji characters
+        const emojiRegex = /^[\p{Emoji}\p{Emoji_Presentation}\p{Emoji_Modifier_Base}\p{Emoji_Modifier}\p{Emoji_Component}]+$/u;
+        if (emojiRegex.test(newEmoji.trim()) || newEmoji.length <= 3) {
+          saveTeamEmoji(currentTeamId, newEmoji.trim());
+          updateUserInfo();
+        } else {
+          alert('Please enter a valid emoji!');
+        }
+      }
+    }
+
+    // Function to update user info display
+    function updateUserInfo() {
+      const currentTeamId = sessionStorage.getItem('teamId');
+      const currentTeamName = sessionStorage.getItem('teamName');
+      const userInfo = document.getElementById('userInfo');
+      const userName = document.getElementById('userName');
+      const userEmoji = document.getElementById('userEmoji');
+
+      if (currentTeamId && currentTeamName) {
+        userInfo.style.display = 'flex';
+        userName.textContent = currentTeamName;
+        userEmoji.textContent = getTeamEmoji(currentTeamId);
+      } else {
+        userInfo.style.display = 'none';
+      }
+    }
+
+    // Logout function
+    function logout() {
+      sessionStorage.removeItem('teamId');
+      sessionStorage.removeItem('teamName');
+      sessionStorage.removeItem('isAdmin');
+      window.location.href = '../login.html?competition=fitbit';
+    }
+
+    // Initialize user info on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      updateUserInfo();
+    });
+  </script>
+</body>
+</html>

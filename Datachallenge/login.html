@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AAU Data Challenge</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Generated at deploy-time from environment (never commit this file) -->
+  <script src="assets/credential-hashes.js"></script>
+  <style>
+    :root {
+      --aau-blue: #276C8A;
+      --aau-light-blue: #6699CC;
+      --aau-gray: #F5F7FA;
+      --dark-gray: #1f2937;
+      --light-gray: #f8fafc;
+    }
+    
+    .title-main {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: var(--dark-gray);
+      letter-spacing: -0.025em;
+    }
+    
+    .btn-primary {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      background: linear-gradient(135deg, var(--aau-blue) 0%, var(--aau-light-blue) 100%);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--aau-blue), var(--aau-light-blue), #8b5cf6);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(39, 108, 138, 0.08);
+      transform: translateY(-4px);
+      border-color: rgba(39, 108, 138, 0.2);
+    }
+    
+    .card:hover::before {
+      opacity: 1;
+    }
+    
+    .input-field {
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid #e2e8f0;
+      background: rgba(248, 250, 252, 0.8);
+      backdrop-filter: blur(10px);
+    }
+    
+    .input-field:hover {
+      border-color: rgba(39, 108, 138, 0.3);
+      background: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(39, 108, 138, 0.08);
+    }
+    
+    .input-field:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(39, 108, 138, 0.15), 0 0 0 3px rgba(39, 108, 138, 0.1);
+      border-color: var(--aau-blue);
+      background: white;
+    }
+    
+    .btn-nav {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-nav.active {
+      background: var(--aau-blue);
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-nav:not(.active) {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    
+    .btn-nav:not(.active):hover {
+      background: #e2e8f0;
+      color: var(--aau-blue);
+    }
+    
+    .clean-background {
+      background: #ffffff;
+    }
+    
+    .title-modern {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .title-gradient {
+      background: linear-gradient(135deg, var(--aau-blue) 0%, var(--aau-light-blue) 50%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+      line-height: 1.4;
+      padding: 0.5rem 0 0.8rem 0;
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle-modern {
+      color: #64748b;
+      font-weight: 500;
+      font-size: 1.25rem;
+      margin-top: 0.5rem;
+    }
+    
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+      .title-gradient {
+        font-size: 2.5rem;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+      }
+      
+      .subtitle-modern {
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+      
+      .card {
+        margin: 0 1rem;
+        padding: 1.5rem;
+      }
+      
+      .input-field {
+        padding: 0.875rem 1rem;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+      
+      .login-button {
+        padding: 0.875rem 1.5rem;
+        font-size: 16px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .title-gradient {
+        font-size: 2rem;
+        line-height: 1.1;
+      }
+      
+      .card {
+        margin: 0 0.5rem;
+        padding: 1.25rem;
+      }
+      
+      .input-field {
+        padding: 0.75rem 0.875rem;
+      }
+    }
+    
+    .login-button {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .login-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .login-button:hover::before {
+      left: 100%;
+    }
+    
+    .login-button:hover {
+      box-shadow: 0 12px 32px rgba(39, 108, 138, 0.3), 0 4px 16px rgba(39, 108, 138, 0.1);
+      transform: translateY(-2px) scale(1.02);
+    }
+    
+    .login-button:active {
+      transform: translateY(0) scale(0.98);
+      transition-duration: 0.1s;
+    }
+    
+    /* Miglioramento del label */
+    .form-label {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      display: block;
+      transition: color 0.3s ease;
+    }
+    
+    .input-field:focus + .form-label,
+    .input-field:hover + .form-label {
+      color: var(--aau-blue);
+    }
+  </style>
+  <!-- Load credential hashes generated from GitHub Secrets -->
+  <script src="assets/credential-hashes.js"></script>
+  <script>
+    // Team credentials (hashes are injected at deploy-time via assets/credential-hashes.js)
+    const teamCredentials = {
+      'aau26_team1': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team1?.passwordHash || ''), teamName: 'P-value pirates' },
+      'aau26_team2': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team2?.passwordHash || ''), teamName: 'The Rvengers' },
+      'aau26_team3': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team3?.passwordHash || ''), teamName: 'Outliers' },
+      'aau26_team4': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team4?.passwordHash || ''), teamName: 'Smooth operators' },
+      'aau26_team5': { passwordHash: (window.CREDENTIAL_HASHES?.teams?.aau26_team5?.passwordHash || ''), teamName: 'Byte me' }
+    };
+    
+    // Multiple competition password system (passwordHash injected at deploy-time)
+    // Fallback hash for AAU2025 if credential-hashes.js is not loaded
+    const ADMIN_PASSWORD_HASH_FALLBACK = '2ea7a8e0bddbcc81de917ea0991e93a8f17184dde6d1d997277d3dbf6d5cf1e0';
+    
+    const competitions = {
+      'fitbit': {
+        passwordHash: (window.CREDENTIAL_HASHES?.competitions?.fitbit?.passwordHash || ADMIN_PASSWORD_HASH_FALLBACK),
+        redirect: 'private/overview.html',
+        name: 'FitBit Daily Activity Tracking',
+        emoji: '🏃'
+      }
+    };
+
+    // Compute SHA-256 hex digest in browser
+    async function sha256Hex(str) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(str);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Get competition from URL parameter
+    function getCompetition() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('competition') || 'fitbit';
+    }
+
+    // Update page based on competition
+    function updateCompetitionInfo() {
+      const competition = getCompetition();
+      const compData = competitions[competition];
+      
+      if (compData) {
+        document.getElementById('competition-name').textContent = compData.name;
+        document.getElementById('competition-title').textContent = compData.name + ' - Login';
+        document.title = 'Login - ' + compData.name;
+        
+        // Update emoji
+        const emojiElement = document.querySelector('.text-2xl');
+        if (emojiElement) {
+          emojiElement.textContent = compData.emoji;
+        }
+      }
+    }
+
+    async function checkPassword() {
+      const password = document.getElementById('password').value;
+      const competition = getCompetition();
+      const compData = competitions[competition];
+      
+      const enteredHash = await sha256Hex(password);
+      
+      // Check team credentials by comparing hashes
+      let validTeam = null;
+      for (const [teamId, credentials] of Object.entries(teamCredentials)) {
+        if (enteredHash === credentials.passwordHash) {
+          validTeam = { id: teamId, name: credentials.teamName };
+          break;
+        }
+      }
+      
+      // Check competition password by hash
+      const isCompetitionPassword = compData && enteredHash === compData.passwordHash;
+
+      if (isCompetitionPassword || validTeam) {
+        // Team login
+        if (validTeam) {
+          sessionStorage.setItem('teamId', validTeam.id);
+          sessionStorage.setItem('teamName', validTeam.name);
+          sessionStorage.removeItem('isAdmin');
+        } else {
+          // Admin login (fitbit competition password)
+          if (competition === 'fitbit') {
+            sessionStorage.setItem('isAdmin', 'true');
+            sessionStorage.removeItem('teamId');
+            sessionStorage.removeItem('teamName');
+          }
+        }
+        window.location.href = compData.redirect;
+      } else {
+        document.getElementById('error').textContent = "Incorrect password, try again.";
+      }
+    }
+
+    // Update page when loaded
+    window.onload = function() {
+      updateCompetitionInfo();
+    }
+  </script>
+</head>
+<body class="clean-background min-h-screen">
+  <!-- Header Section -->
+  <div class="relative z-20">
+    <!-- Modern Header -->
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between">
+        <!-- Modern Title Section -->
+        <div class="title-modern text-center lg:text-left mb-8 lg:mb-0 flex-1" style="overflow: visible;">
+          <h1 class="title-gradient text-5xl lg:text-7xl mb-6" style="overflow: visible;">
+            AAU Data<br>Challenges
+          </h1>
+          <p class="subtitle-modern max-w-lg mx-auto lg:mx-0 text-lg lg:text-xl">
+            Access your competition dashboard
+          </p>
+        </div>
+        
+        <!-- Logo -->
+        <div class="flex-shrink-0 lg:ml-8">
+          <img src="assets/logo2.png" alt="Universität Klagenfurt logo" class="h-20 lg:h-24 opacity-90">
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="text-center mb-12">
+      <nav class="inline-block">
+        <a href="index.html" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-[var(--aau-blue)] rounded-lg transition-all duration-300 font-medium" style="font-family: 'Poppins', sans-serif;">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Home
+        </a>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Login Form -->
+  <main class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+    <div class="flex justify-center">
+      <div class="card p-6 sm:p-8 w-full max-w-md">
+        <div class="text-center mb-6 sm:mb-8">
+          <h2 id="competition-title" class="text-xl sm:text-2xl font-bold mb-4" style="font-family: 'Poppins', sans-serif; color: var(--aau-blue);">Competition Login</h2>
+          <p class="text-gray-600 mb-3 text-sm sm:text-base" style="font-family: 'Poppins', sans-serif;">Enter access password for:</p>
+          <div class="flex items-center justify-center space-x-2 mb-4">
+            <p id="competition-name" class="text-[var(--aau-blue)] font-bold text-sm sm:text-base" style="font-family: 'Poppins', sans-serif;">FitBit Daily Activity Tracking</p>
+          </div>
+        </div>
+        
+        <form onsubmit="event.preventDefault(); checkPassword(); return false;" class="space-y-4 sm:space-y-6">
+          <div>
+            <label for="password" class="form-label text-sm" style="font-family: 'Poppins', sans-serif;">Access Password</label>
+            <input type="password" id="password" placeholder="Enter access password"
+                   class="input-field w-full rounded-xl px-4 py-3 sm:py-4 focus:outline-none focus:ring-0"
+                   style="font-family: 'Poppins', sans-serif;" required>
+          </div>
+          
+          <button type="submit" class="login-button bg-gradient-to-r from-[var(--aau-blue)] to-[var(--aau-light-blue)] text-white py-3 sm:py-4 rounded-xl w-full font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] relative overflow-hidden"
+                  style="font-family: 'Poppins', sans-serif; box-shadow: 0 8px 24px rgba(39, 108, 138, 0.2);">
+            <span class="relative z-10">Access Dashboard →</span>
+          </button>
+          
+          <p id="error" class="text-red-500 text-sm text-center" style="font-family: 'Poppins', sans-serif;"></p>
+        </form>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

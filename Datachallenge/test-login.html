@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Test Team Login</h1>
+    <p>Enter a password to test login functionality.</p>
+    
+    <form onsubmit="event.preventDefault(); testLogin(); return false;">
+        <input type="password" id="testPassword" placeholder="Enter password">
+        <button type="submit">Test Login</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script src="assets/credential-hashes.js"></script>
+    <script>
+        // Compute SHA-256 hex digest
+        async function sha256Hex(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function testLogin() {
+            const password = document.getElementById('testPassword').value;
+            const result = document.getElementById('result');
+            
+            if (!window.CREDENTIAL_HASHES) {
+                result.innerHTML = `<p style="color: orange;">Loading credentials...</p>`;
+                setTimeout(testLogin, 500);
+                return;
+            }
+
+            const enteredHash = await sha256Hex(password);
+            
+            let validTeam = null;
+            for (const [teamId, credentials] of Object.entries(window.CREDENTIAL_HASHES.teamCredentials)) {
+                if (enteredHash === credentials.passwordHash) {
+                    validTeam = { id: teamId, name: credentials.teamName };
+                    break;
+                }
+            }
+            
+            if (validTeam) {
+                result.innerHTML = `<p style="color: green;">SUCCESS! Team: ${validTeam.name} (${validTeam.id})</p>`;
+            } else {
+                result.innerHTML = `<p style="color: red;">FAILED! Password not found</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

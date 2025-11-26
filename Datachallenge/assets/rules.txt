@@ -1,0 +1,81 @@
+Competition rules: Submit your predictions in CSV format.
+
+
+
+
+
+
+ 📂 Dataset Description
+  
+This dataset contains daily-level information collected from Fitbit wearable devices.
+It integrates **physical activity**, **active distances**, **sedentary behavior**, **sleep metrics**, 
+and **body composition** for some users, observed over multiple days.
+
+Each record represents user activity in a specific date
+  
+## 🎯 Prediction Task (Regression)
+  
+
+---
+  
+  📊 Variable Dictionary
+  
+  🧍 **Identifiers & Metadata**
+  
+  | Variable | Type    | Description                              |
+  | -------- | ------- | ---------------------------------------- |
+  | `Id`     | numeric | Unique anonymized participant identifier |
+  | `Date`   | date    | Activity date (YYYY-MM-DD)               |
+  
+  ---
+  
+  ### 🏃 **Physical Activity (minutes and distances)**
+  
+  | Variable                   | Type    | Description                                    |
+  | -------------------------- | ------- | ---------------------------------------------- |
+  | `TotalSteps`               | numeric | Total steps recorded that day                  |
+  | `TotalDistance`            | numeric | Total distance (miles)                         |
+  | `TrackerDistance`          | numeric | Distance detected by the tracker               |
+  | `LoggedActivitiesDistance` | numeric | Manually logged distance                       |
+  | `VeryActiveDistance`       | numeric | Distance during very active periods            |
+  | `ModeratelyActiveDistance` | numeric | Distance during moderate activity              |
+  | `LightActiveDistance`      | numeric | Distance during light activity                 |
+  | `SedentaryActiveDistance`  | numeric | Distance during sedentary activity (usually 0) |
+  | `VeryActiveMinutes`        | numeric | Minutes of very intense activity               |
+  | `FairlyActiveMinutes`      | numeric | Minutes of moderate activity                   |
+  | `LightlyActiveMinutes`     | numeric | Minutes of light activity                      |
+  | `SedentaryMinutes`         | numeric | Minutes of inactivity/sitting                  |
+  
+  ---
+  
+  ### 😴 **Sleep Metrics**
+  
+  | Variable             | Type    | Description                               |
+  | -------------------- | ------- | ----------------------------------------- |
+  | `TotalSleepRecords`  | numeric | Number of sleep periods recorded          |
+  | `TotalMinutesAsleep` | numeric | Total minutes asleep                      |
+  | `TotalTimeInBed`     | numeric | Total minutes spent in bed (sleep + rest) |
+  
+  ---
+  
+  ### ⚖️ **Body Composition (if available)**
+  
+  | Variable         | Type                     | Description                         |
+  | ---------------- | ------------------------ | ----------------------------------- |
+  | `WeightKg`       | numeric (may contain NA) | Weight in kilograms                 |
+  | `WeightPounds`   | numeric                  | Weight in pounds                    |
+  | `Fat`            | numeric                  | Body fat percentage                 |
+  | `BMI`            | numeric                  | Body mass index                     |
+  | `IsManualReport` | factor                   | Whether the weight entry was manual |
+  | `LogId`          | numeric                  | Weight log record identifier        |
+  
+  ---
+  
+  ### 🔥 **Target Variable**
+  
+  | Variable   | Type    | Description                                            |
+  | ---------- | ------- | ------------------------------------------------------ |
+  | `Calories` | numeric | **Total calories burned that day** (regression target) |
+  
+  ---
+  
